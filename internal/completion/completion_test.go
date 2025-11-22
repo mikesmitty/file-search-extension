@@ -84,22 +84,61 @@ func TestNewCompleter(t *testing.T) {
 }
 
 func TestCompleterGetModelNames(t *testing.T) {
-	t.Run("returns empty list when disabled", func(t *testing.T) {
-		completer := NewCompleter("test-key", false, 5*time.Minute)
+	t.Run("returns static list", func(t *testing.T) {
+		completer := NewCompleter("test-key", true, 5*time.Minute)
 		models := completer.GetModelNames()
 
-		if len(models) != 0 {
-			t.Errorf("Expected empty model list when disabled, got %v", models)
+		if len(models) == 0 {
+			t.Error("Expected non-empty model list")
+		}
+
+		// Check for expected models
+		expectedModels := map[string]bool{
+			"gemini-2.5-flash": true,
+			"gemini-2.5-pro":   true,
+		}
+
+		for _, model := range models {
+			if !expectedModels[model] {
+				t.Errorf("Unexpected model in list: %s", model)
+			}
+		}
+
+		for expectedModel := range expectedModels {
+			found := false
+			for _, model := range models {
+				if model == expectedModel {
+					found = true
+					break
+				}
+			}
+			if !found {
+				t.Errorf("Expected model %s not found in list", expectedModel)
+			}
 		}
 	})
 
-	t.Run("returns empty list on API error", func(t *testing.T) {
+	t.Run("returns same list when disabled", func(t *testing.T) {
+		completer := NewCompleter("test-key", false, 5*time.Minute)
+		models := completer.GetModelNames()
+
+		if len(models) == 0 {
+			t.Error("Expected non-empty model list even when disabled")
+		}
+	})
+
+	t.Run("does not make API calls", func(t *testing.T) {
 		completer := NewCompleter("invalid-key", true, 5*time.Minute)
 		models := completer.GetModelNames()
 
-		// Should return empty list since API call fails and no static fallback
-		if len(models) != 0 {
-			t.Errorf("Expected empty model list on API error, got %v", models)
+		// Should succeed even with invalid key since it's static
+		if len(models) == 0 {
+			t.Error("Expected static model list to work with invalid key")
+		}
+
+		// Client should not have been initialized
+		if completer.clientInit {
+			t.Error("Client should not be initialized for static method")
 		}
 	})
 }

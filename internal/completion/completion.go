@@ -2,8 +2,9 @@ package completion
 
 import (
 	"context"
-	"strings"
 	"time"
+
+	"github.com/mikesmitty/file-search-extension/internal/constants"
 
 	"github.com/mikesmitty/file-search-extension/internal/gemini"
 )
@@ -162,47 +163,5 @@ func (c *Completer) GetDocumentNames(storeRef string) []string {
 
 // GetModelNames returns a list of available model names
 func (c *Completer) GetModelNames() []string {
-	if !c.enabled {
-		return []string{}
-	}
-
-	// Check cache first
-	if cached, ok := c.cache.Get("models"); ok {
-		return cached
-	}
-
-	// Create context with timeout
-	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
-	defer cancel()
-
-	// Ensure client is initialized
-	client, err := c.ensureClient(ctx)
-	if err != nil {
-		return []string{}
-	}
-
-	// Get models from API
-	models, err := client.ListModels(ctx)
-	if err != nil {
-		return []string{}
-	}
-
-	// Extract names
-	var names []string
-	for _, m := range models {
-		// Filter for Gemini models if needed, but for now just take them all
-		// The name usually comes as "models/gemini-pro", we might want to strip "models/"
-		// or keep it depending on what the API expects.
-		// The CLI usually expects "gemini-pro".
-		// Let's check what the API returns. Usually "models/gemini-pro".
-		// But the user input usually doesn't have "models/".
-		// The `genai` SDK `GenerateContent` usually takes "gemini-pro".
-		name := strings.TrimPrefix(m.Name, "models/")
-		names = append(names, name)
-	}
-
-	// Cache the results
-	c.cache.Set("models", names)
-
-	return names
+	return constants.GetModelList()
 }
