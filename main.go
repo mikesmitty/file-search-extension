@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"github.com/mikesmitty/file-search-extension/internal/completion"
+	"github.com/mikesmitty/file-search-extension/internal/constants"
 	"github.com/mikesmitty/file-search-extension/internal/gemini"
 	"github.com/mikesmitty/file-search-extension/internal/mcp"
 	"github.com/spf13/cobra"
@@ -415,7 +416,7 @@ func main() {
 		},
 	}
 	importFileCmd.Flags().StringVar(&importFileStore, "store", "", "Store display name")
-	importFileCmd.Flags().StringVar(&importFileStoreID, "store-id", "", "Store resource ID (fileSearchStores/xxx)")
+	importFileCmd.Flags().StringVar(&importFileStoreID, "store-id", "", "Store resource ID ("+constants.StoreResourcePrefix+"xxx)")
 	importFileCmd.RegisterFlagCompletionFunc("store", func(cmd *cobra.Command, args []string, toComplete string) ([]string, cobra.ShellCompDirective) {
 		return getCompleter().GetStoreNames(), cobra.ShellCompDirectiveNoFileComp
 	})
@@ -580,7 +581,7 @@ func main() {
 		},
 	}
 	uploadCmd.Flags().StringVar(&uploadStoreName, "store", "", "Store display name (optional)")
-	uploadCmd.Flags().StringVar(&uploadStoreID, "store-id", "", "Store resource ID (optional, fileSearchStores/xxx)")
+	uploadCmd.Flags().StringVar(&uploadStoreID, "store-id", "", "Store resource ID (optional, "+constants.StoreResourcePrefix+"xxx)")
 	uploadCmd.Flags().StringVar(&uploadDisplayName, "name", "", "Display name (optional)")
 	uploadCmd.Flags().StringVar(&uploadMimeType, "mime-type", "", "MIME type (optional, e.g. text/plain, application/pdf)")
 	uploadCmd.Flags().IntVar(&uploadChunkSize, "chunk-size", 0, "Max tokens per chunk (for store uploads)")
@@ -634,7 +635,7 @@ func main() {
 		},
 	}
 	docListCmd.Flags().StringVar(&docListStore, "store", "", "Store display name")
-	docListCmd.Flags().StringVar(&docListStoreID, "store-id", "", "Store resource ID (fileSearchStores/xxx)")
+	docListCmd.Flags().StringVar(&docListStoreID, "store-id", "", "Store resource ID ("+constants.StoreResourcePrefix+"xxx)")
 	docListCmd.RegisterFlagCompletionFunc("store", func(cmd *cobra.Command, args []string, toComplete string) ([]string, cobra.ShellCompDirective) {
 		return getCompleter().GetStoreNames(), cobra.ShellCompDirectiveNoFileComp
 	})
@@ -782,7 +783,7 @@ func main() {
 			}
 
 			if queryModel == "" {
-				queryModel = "gemini-2.5-flash"
+				queryModel = constants.DefaultModel
 			}
 			resp, err := client.Query(ctx, args[0], storeID, queryModel, queryMetadataFilter)
 			if err != nil {
@@ -792,8 +793,8 @@ func main() {
 		},
 	}
 	queryCmd.Flags().StringVar(&queryStoreName, "store", "", "Store display name (optional)")
-	queryCmd.Flags().StringVar(&queryStoreID, "store-id", "", "Store resource ID (optional, fileSearchStores/xxx)")
-	queryCmd.Flags().StringVar(&queryModel, "model", "gemini-2.5-flash", "Model name")
+	queryCmd.Flags().StringVar(&queryStoreID, "store-id", "", "Store resource ID (optional, "+constants.StoreResourcePrefix+"xxx)")
+	queryCmd.Flags().StringVar(&queryModel, "model", constants.DefaultModel, "Model name")
 	queryCmd.Flags().StringVar(&queryMetadataFilter, "metadata-filter", "", "Metadata filter expression (optional)")
 	queryCmd.RegisterFlagCompletionFunc("store", func(cmd *cobra.Command, args []string, toComplete string) ([]string, cobra.ShellCompDirective) {
 		return getCompleter().GetStoreNames(), cobra.ShellCompDirectiveNoFileComp

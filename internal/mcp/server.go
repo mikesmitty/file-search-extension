@@ -7,6 +7,7 @@ import (
 
 	"github.com/mark3labs/mcp-go/mcp"
 	"github.com/mark3labs/mcp-go/server"
+	"github.com/mikesmitty/file-search-extension/internal/constants"
 	"github.com/mikesmitty/file-search-extension/internal/gemini"
 	"google.golang.org/genai"
 )
@@ -246,7 +247,7 @@ func NewServer(client GeminiClient, enabledTools []string) *server.MCPServer {
 			mcp.WithDescription("Query the knowledge base using Gemini File Search. Use this to answer questions based on uploaded documents."),
 			mcp.WithString("query", mcp.Required(), mcp.Description("The question or query to ask.")),
 			mcp.WithString("store_name", mcp.Description("The resource name or display name of the store to search. If omitted, searches all stores (if supported) or requires specific configuration.")),
-			mcp.WithString("model", mcp.Description("The model to use (default: gemini-2.5-flash).")),
+			mcp.WithString("model", mcp.Description("The model to use (default: "+constants.DefaultModel+").")),
 			mcp.WithString("metadata_filter", mcp.Description("Optional metadata filter expression (e.g., 'key = \"value\"').")),
 		), func(ctx context.Context, request mcp.CallToolRequest) (*mcp.CallToolResult, error) {
 			args, ok := request.Params.Arguments.(map[string]interface{})
@@ -260,7 +261,7 @@ func NewServer(client GeminiClient, enabledTools []string) *server.MCPServer {
 			storeName, _ := getStringArg(args, "store_name")
 			model, _ := getStringArg(args, "model")
 			if model == "" {
-				model = "gemini-2.5-flash"
+				model = constants.DefaultModel
 			}
 			metadataFilter, _ := getStringArg(args, "metadata_filter")
 

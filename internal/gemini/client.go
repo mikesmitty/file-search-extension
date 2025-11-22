@@ -6,6 +6,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/mikesmitty/file-search-extension/internal/constants"
 	"google.golang.org/genai"
 )
 
@@ -63,14 +64,31 @@ func (c *Client) ListStores(ctx context.Context) ([]*genai.FileSearchStore, erro
 	return resp.Items, nil
 }
 
+func (c *Client) ListModels(ctx context.Context) ([]*genai.Model, error) {
+	resp, err := c.client.Models.List(ctx, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	var models []*genai.Model
+	models = append(models, resp.Items...)
+
+	for resp.NextPageToken != "" {
+		resp, err = resp.Next(ctx)
+		if err != nil {
+			return nil, err
+		}
+		models = append(models, resp.Items...)
+	}
+	return models, nil
+}
+
 // ResolveStoreName resolves a display name or partial name to a full store resource name.
 // If the input is already a resource name (starts with "fileSearchStores/"), returns it as-is.
 func (c *Client) ResolveStoreName(ctx context.Context, nameOrID string) (string, error) {
 	// If already a resource name, return as-is
-	if len(nameOrID) > 0 && (nameOrID[:1] == "f" || nameOrID[:1] == "F") {
-		if len(nameOrID) > 16 && nameOrID[:16] == "fileSearchStores" {
-			return nameOrID, nil
-		}
+	if strings.HasPrefix(nameOrID, constants.StoreResourcePrefix) {
+		return nameOrID, nil
 	}
 
 	// Otherwise, search for display name
@@ -92,7 +110,7 @@ func (c *Client) ResolveStoreName(ctx context.Context, nameOrID string) (string,
 // If the input is already a resource name (starts with "files/"), returns it as-is.
 func (c *Client) ResolveFileName(ctx context.Context, nameOrID string) (string, error) {
 	// If already a resource name, return as-is
-	if len(nameOrID) > 6 && nameOrID[:6] == "files/" {
+	if strings.HasPrefix(nameOrID, constants.FileResourcePrefix) {
 		return nameOrID, nil
 	}
 
@@ -116,7 +134,7 @@ func (c *Client) ResolveFileName(ctx context.Context, nameOrID string) (string, 
 // Requires the store name/ID to scope the search.
 func (c *Client) ResolveDocumentName(ctx context.Context, storeNameOrID, docNameOrID string) (string, error) {
 	// If already a resource name, return as-is
-	if len(docNameOrID) > 10 && strings.Contains(docNameOrID, "/documents/") {
+	if strings.Contains(docNameOrID, constants.DocumentResourcePrefix) {
 		return docNameOrID, nil
 	}
 
@@ -408,11 +426,11 @@ func (c *Client) Query(ctx context.Context, text string, storeName string, model
 // If operationType is empty, it will try both import and upload types.
 func (c *Client) GetOperation(ctx context.Context, operationName string, operationType OperationType) (*OperationStatus, error) {
 	// Validate operation name format
-	if !strings.HasPrefix(operationName, "fileSearchStores/") {
-		return nil, fmt.Errorf("invalid operation name: must start with 'fileSearchStores/'")
+	if !strings.HasPrefix(operationName, constants.StoreResourcePrefix) {
+		return nil, fmt.Errorf("invalid operation name: must start with '%s'", constants.StoreResourcePrefix)
 	}
-	if !strings.Contains(operationName, "/operations/") {
-		return nil, fmt.Errorf("invalid operation name: must contain '/operations/'")
+	if !strings.Contains(operationName, constants.OperationResourcePrefix) {
+		return nil, fmt.Errorf("invalid operation name: must contain '%s'", constants.OperationResourcePrefix)
 	}
 
 	// If type specified, use it directly

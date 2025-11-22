@@ -119,15 +119,15 @@ Show upload/indexing progress during long-running operations.
 
 ## 🛠 Code Review Improvements (High Priority)
 
-### 11. Refactor Magic Strings & Constants
+### 11. Refactor Magic Strings & Constants ✓
 **Priority**: High
-**Status**: Not Started
+**Status**: Completed
 **Goal**: Improve maintainability and reduce risk of typos.
 
-- [ ] Define default model constant (e.g. `DefaultModel = "gemini-2.5-flash"`) in one place and propagate to CLI and MCP.
-- [ ] Define resource prefixes (`fileSearchStores/`, `files/`) as constants.
-- [ ] Replace all hardcoded occurrences with these constants.
-- [ ] Remove hardcoded model list in `internal/completion/completion.go` and fetch dynamically or use shared constant.
+- [x] Define default model constant (e.g. `DefaultModel = "gemini-2.5-flash"`) in one place and propagate to CLI and MCP.
+- [x] Define resource prefixes (`fileSearchStores/`, `files/`) as constants.
+- [x] Replace all hardcoded occurrences with these constants.
+- [x] Remove hardcoded model list in `internal/completion/completion.go` and fetch dynamically or use shared constant.
 
 ### 14. Binary Name Consistency
 **Priority**: High
