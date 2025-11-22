@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.2](https://github.com/mikesmitty/file-search-extension/compare/v0.1.1...v0.1.2) (2025-11-22)
+
+
+### Bug Fixes
+
+* modernize goreleaser config ([#5](https://github.com/mikesmitty/file-search-extension/issues/5)) ([40cb081](https://github.com/mikesmitty/file-search-extension/commit/40cb081f7b803e5b3cf8843a439a7676aeae7ee9))
+
 ## [0.1.1](https://github.com/mikesmitty/file-search-extension/compare/v0.1.0...v0.1.1) (2025-11-22)
 
 
