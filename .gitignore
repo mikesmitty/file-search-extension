@@ -33,3 +33,6 @@ go.work.sum
 
 # Environment variables
 .env
+
+# Generated configuration
+gemini-extension.windows.json

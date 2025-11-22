@@ -8,14 +8,29 @@ release:
 before:
   hooks:
     - go mod tidy
+    - ./scripts/generate_windows_config.sh
 
 builds:
-  - env:
+  - id: default
+    env:
       - CGO_ENABLED=0
     goos:
       - linux
-      - windows
       - darwin
+    goarch:
+      - amd64
+      - arm64
+    flags:
+      - -trimpath
+    ldflags:
+      - -s -w -X main.version={{.Version}} -X main.commit={{.Commit}} -X main.date={{ .CommitDate }}
+    mod_timestamp: "{{ .CommitTimestamp }}"
+
+  - id: windows
+    env:
+      - CGO_ENABLED=0
+    goos:
+      - windows
     goarch:
       - amd64
       - arm64
@@ -31,7 +46,8 @@ sboms:
     artifacts: source
 
 archives:
-  - formats: ['tar.gz']
+  - id: nix
+    formats: ['tar.gz']
     # this name template makes the OS and Arch compatible with the results of uname.
     name_template: >-
       {{ .Os }}.
@@ -39,12 +55,22 @@ archives:
       {{- else if eq .Arch "arm64" }}arm64
       {{- else }}{{ .Arch }}{{ end }}.
       {{- .ProjectName }}
-    # use zip for windows archives
-    format_overrides:
-      - goos: windows
-        formats: ['zip']
     files:
       - gemini-extension.json
+      - src: GEMINI.md.release
+        dst: GEMINI.md
+
+  - id: windows
+    formats: ['zip']
+    name_template: >-
+      {{ .Os }}.
+      {{- if eq .Arch "amd64" }}x64
+      {{- else if eq .Arch "arm64" }}arm64
+      {{- else }}{{ .Arch }}{{ end }}.
+      {{- .ProjectName }}
+    files:
+      - src: gemini-extension.windows.json
+        dst: gemini-extension.json
       - src: GEMINI.md.release
         dst: GEMINI.md
 

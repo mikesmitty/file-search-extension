@@ -3,11 +3,11 @@
   "version": "0.1.0",
   "mcpServers": {
     "file-search": {
-      "command": "./file-search",
+      "command": "${extensionPath}${/}file-search",
       "args": [
         "mcp"
       ],
-      "cwd": "."
+      "cwd": "${workspacePath}"
     }
   }
 }
