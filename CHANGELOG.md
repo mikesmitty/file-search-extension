@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.1](https://github.com/mikesmitty/file-search/compare/v0.3.0...v0.3.1) (2025-11-22)
+
+
+### Bug Fixes
+
+* remove experimental settings storage for now ([#33](https://github.com/mikesmitty/file-search/issues/33)) ([15314c7](https://github.com/mikesmitty/file-search/commit/15314c74392e1ff0fb117470b91a640c4c77a1e8))
+
 ## [0.3.0](https://github.com/mikesmitty/file-search/compare/v0.2.0...v0.3.0) (2025-11-22)
 
 
