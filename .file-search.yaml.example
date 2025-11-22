@@ -9,35 +9,50 @@
 
 # MCP Server Configuration
 # Configure which tools are available in the MCP server
-# Default: ["query"]
-# Available tools: query, import, upload, list, manage
+# Default: ["query_knowledge_base"]
 # You can also set via:
-# - Environment variable: MCP_TOOLS=query,import,list
-# - Command flag: file-search mcp --mcp-tools query,import
+# - Environment variable: MCP_TOOLS=query_knowledge_base,import_file_to_store,list_stores
+# - Command flag: file-search mcp --mcp-tools query_knowledge_base,import_file_to_store
 
 # Minimal configuration (default - only query tool)
 # mcp_tools:
-#   - query
+#   - query_knowledge_base
 
 # Balanced configuration (query + discovery)
 mcp_tools:
-  - query
-  - list
+  - query_knowledge_base
+  - list_stores
+  - list_files
+  - list_documents
 
 # Full configuration (all tools enabled)
 # mcp_tools:
-#   - query
-#   - import
-#   - upload
-#   - list
-#   - manage
+#   - query_knowledge_base
+#   - import_file_to_store
+#   - upload_file
+#   - list_stores
+#   - list_files
+#   - list_documents
+#   - create_store
+#   - delete_store
+#   - delete_file
+#   - delete_document
+
+# Or simply enable all tools with:
+# mcp_tools:
+#   - all
 
 # Tool Descriptions:
-# - query:  Query Gemini with optional file search and metadata filtering
-# - import: Import files from Files API into stores
-# - upload: Upload and index files directly
-# - list:   List stores, files, and documents
-# - manage: Create/delete stores and documents (full CRUD)
+# - query_knowledge_base: Query the knowledge base with optional metadata filtering
+# - import_file_to_store: Import files from Files API into stores
+# - upload_file: Upload and index files directly to a store
+# - list_stores: List all File Search Stores
+# - list_files: List all files in the Gemini Files API
+# - list_documents: List documents within a specific store
+# - create_store: Create a new File Search Store
+# - delete_store: Delete a File Search Store (with optional force flag)
+# - delete_file: Delete a file from the Files API
+# - delete_document: Delete a document from a store
 
 # Shell Completion Configuration
 # Enable or disable dynamic shell completion for resource names

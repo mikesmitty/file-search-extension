@@ -35,24 +35,58 @@ To enable Gemini to use this knowledge base, add a `GEMINI.md` file to the root 
 
 This project uses a searchable knowledge base for supplementary documentation.
 
-## Tools
+## Available Tools
 
-- **Tool Name:** `file_search.query`
+This MCP server provides 10 tools for interacting with Gemini File Search. By default, only `query_knowledge_base` is enabled to minimize context usage.
+
+### Core Tools (Recommended)
+- **`query_knowledge_base`** - Query the knowledge base with optional metadata filtering
+- **`import_file_to_store`** - Import files from Files API into a store
+- **`upload_file`** - Upload and index files directly to a store
+
+### List/Discovery Tools
+- **`list_stores`** - List all File Search Stores
+- **`list_files`** - List all files in the Gemini Files API
+- **`list_documents`** - List documents within a specific store
+
+### Management Tools
+- **`create_store`** - Create a new File Search Store
+- **`delete_store`** - Delete a File Search Store (with optional force flag)
+- **`delete_file`** - Delete a file from the Files API
+- **`delete_document`** - Delete a document from a store
+
+### Tool Configuration
+
+Configure which tools are available via the `MCP_TOOLS` environment variable or `.file-search.yaml`:
+
+```bash
+# Minimal (default) - only query
+MCP_TOOLS=query_knowledge_base file-search mcp
+
+# Balanced - query + discovery
+MCP_TOOLS=query_knowledge_base,list_stores,list_files,list_documents file-search mcp
+
+# Full access - all tools
+MCP_TOOLS=all file-search mcp
+```
+
+## Store Configuration
+
 - **Store Name:** `my-project-kb` (Replace with your actual store name)
 
 ## Instructions
 
-1.  **Always Search First:** If I ask about technical details, specifications, or architecture found in the documentation, you **MUST** use `file_search.query` before answering. Do not guess.
+1.  **Always Search First:** If I ask about technical details, specifications, or architecture found in the documentation, you **MUST** use `query_knowledge_base` before answering. Do not guess.
 2.  **Use Metadata Filters:** If I specify a category or type (e.g., "in the API docs"), use the `metadata_filter` parameter (e.g., `category = "api"`).
 3.  **Cite Sources:** When providing answers from the knowledge base, mention which document the information came from.
 
 ## Example Usage
 
 User: "What is the max voltage for the T-800?"
-Model: `file_search.query(query="T-800 max voltage", store_name="my-project-kb")`
+Model: `query_knowledge_base(query="T-800 max voltage", store_name="my-project-kb")`
 
 User: "Find the deployment steps in the release notes."
-Model: `file_search.query(query="deployment steps", store_name="my-project-kb", metadata_filter="type = 'release_notes'")`
+Model: `query_knowledge_base(query="deployment steps", store_name="my-project-kb", metadata_filter="type = 'release_notes'")`
 ```
 
 ## 3. Development & Contributing

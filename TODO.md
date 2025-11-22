@@ -161,10 +161,10 @@ Show upload/indexing progress during long-running operations.
 **Status**: Not Started
 **Goal**: Ensure documentation and examples match the actual code behavior.
 
-- [ ] Update `GEMINI.md` to list all available MCP tools (currently only lists `query`).
-- [ ] Populate `README.md` with project description, installation, and usage instructions.
-- [ ] Fix `.file-search.yaml.example`: The `list` and `manage` tool groups are mentioned but not implemented in `server.go`. Either implement them or update the example to use specific tool names.
-- [ ] Verify `scripts/test_integration.sh` works with the final binary name.
+- [x] Update `GEMINI.md` to list all available MCP tools (currently only lists `query`).
+- [x] Populate `README.md` with project description, installation, and usage instructions.
+- [x] Fix `.file-search.yaml.example`: The `list` and `manage` tool groups are mentioned but not implemented in `server.go`. Either implement them or update the example to use specific tool names.
+- [x] Verify `scripts/test_integration.sh` works with the final binary name.
 
 ### 16. Performance Improvements
 **Priority**: Medium
