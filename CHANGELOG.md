@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.3.0](https://github.com/mikesmitty/file-search/compare/v0.2.0...v0.3.0) (2025-11-22)
+
+
+### Features
+
+* enable all mcp tools by default ([#25](https://github.com/mikesmitty/file-search/issues/25)) ([d4f5492](https://github.com/mikesmitty/file-search/commit/d4f5492fa856ce9e6664134452d1c927cc3c460c))
+
+
+### Bug Fixes
+
+* try storing extension api key as sensitive setting ([#31](https://github.com/mikesmitty/file-search/issues/31)) ([4b80324](https://github.com/mikesmitty/file-search/commit/4b803242806e2f2bfbf6ed3da810327d3084d903))
+* update go module name ([#27](https://github.com/mikesmitty/file-search/issues/27)) ([1d04a59](https://github.com/mikesmitty/file-search/commit/1d04a5952a1938aad3d36c6c79169d195378ee6d))
+
 ## [0.2.0](https://github.com/mikesmitty/file-search/compare/v0.1.4...v0.2.0) (2025-11-22)
 
 
