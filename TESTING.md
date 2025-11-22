@@ -1,4 +1,4 @@
-# Testing Guide for File Search Extension
+# Testing Guide for File Search Tool
 
 ## Unit Tests
 

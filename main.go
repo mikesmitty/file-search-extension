@@ -34,7 +34,11 @@ var (
 
 var rootCmd = &cobra.Command{
 	Use:   "file-search",
-	Short: "Gemini File Search & MCP Tool",
+	Short: "File Search Query & MCP Tool",
+	Long: `File Search Query is a CLI tool and Model Context Protocol (MCP) server that 
+enables interaction with the Google Gemini File Search API.
+
+It allows you to manage file stores, upload documents, and perform semantic searches.`,
 }
 
 func init() {

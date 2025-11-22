@@ -1,5 +1,5 @@
 {
-  "name": "file-search-extension",
+  "name": "file-search-query",
   "version": "0.1.4",
   "mcpServers": {
     "file-search": {

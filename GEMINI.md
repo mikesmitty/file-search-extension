@@ -1,6 +1,6 @@
-# Gemini Context: File Search Extension
+# Gemini Context: File Search Query
 
-This extension enables Gemini to search and retrieve information from a dedicated knowledge base of documents (PDFs, text files, etc.) associated with your project. It is particularly useful for providing access to large technical documentation, datasheets, or design specs that don't fit in the context window.
+This tool enables Gemini to search and retrieve information from a dedicated knowledge base of documents (PDFs, text files, etc.) associated with your project. It is particularly useful for providing access to large technical documentation, datasheets, or design specs that don't fit in the context window.
 
 ## 1. Setup (One-time per project)
 
@@ -57,7 +57,7 @@ Model: `file_search.query(query="deployment steps", store_name="my-project-kb", 
 
 ## 3. Development & Contributing
 
-If you are modifying this extension, follow these steps.
+If you are modifying this tool, follow these steps.
 
 ### Prerequisites
 - Go 1.23+

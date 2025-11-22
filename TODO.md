@@ -1,4 +1,4 @@
-# TODO – Gemini File Search CLI Enhancements
+# TODO – File Search Query Enhancements
 
 ## ✅ Completed (Phase 1)
 

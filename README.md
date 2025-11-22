@@ -1,1 +1,1 @@
-# file-search-extension
+# File Search Query
