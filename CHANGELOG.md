@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.2.0](https://github.com/mikesmitty/file-search/compare/v0.1.4...v0.2.0) (2025-11-22)
+
+
+### Features
+
+* rename to File Search Query ([#21](https://github.com/mikesmitty/file-search/issues/21)) ([1ae3191](https://github.com/mikesmitty/file-search/commit/1ae31919a44b6a35a41feb3063cb8dc382076a36))
+
+
+### Bug Fixes
+
+* revert to static model list ([#19](https://github.com/mikesmitty/file-search/issues/19)) ([0b0341b](https://github.com/mikesmitty/file-search/commit/0b0341b4e72d18a0a85d564cc1a3763c4ba2a6a5))
+
 ## [0.1.4](https://github.com/mikesmitty/file-search-extension/compare/v0.1.3...v0.1.4) (2025-11-22)
 
 

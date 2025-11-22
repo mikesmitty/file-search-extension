@@ -1,6 +1,6 @@
 {
   "name": "file-search-query",
-  "version": "0.1.4",
+  "version": "0.2.0",
   "contextFileName": "GEMINI.file-search.md",
   "mcpServers": {
     "file-search": {
