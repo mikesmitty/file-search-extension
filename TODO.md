@@ -129,14 +129,15 @@ Show upload/indexing progress during long-running operations.
 - [x] Replace all hardcoded occurrences with these constants.
 - [x] Remove hardcoded model list in `internal/completion/completion.go` and fetch dynamically or use shared constant.
 
-### 14. Binary Name Consistency
+### 14. Binary Name Consistency ✓
 **Priority**: High
-**Status**: Not Started
+**Status**: Completed
 **Goal**: Ensure the MCP server binary name is handled consistently across configuration and deployment.
 
-- [ ] Verify `gemini-extension.json` uses the correct binary name.
-- [ ] Ensure build process (GoReleaser) outputs the expected binary name.
-- [ ] Handle Windows `.exe` extension requirement (e.g., separate config or platform-aware runner).
+- [x] Ensure `gemini-extension.json` uses the correct binary name (`file-search` vs `gemini-file-search`).
+- [x] Verify `.goreleaser.yml` produces the expected binary name.
+- [x] Check `scripts/` for hardcoded binary names.
+- [x] Handle Windows `.exe` extension requirement (e.g., separate config or platform-aware runner).
 
 ### 12. Improve MCP Tool Documentation
 **Priority**: High
