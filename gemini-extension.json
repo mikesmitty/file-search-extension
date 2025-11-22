@@ -1,0 +1,13 @@
+{
+  "name": "file-search-extension",
+  "version": "0.1.0",
+  "mcpServers": {
+    "file-search": {
+      "command": "./file-search",
+      "args": [
+        "mcp"
+      ],
+      "cwd": "."
+    }
+  }
+}

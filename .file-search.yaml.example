@@ -1,0 +1,57 @@
+# Example configuration file for file-search CLI
+# Copy this to ~/.file-search.yaml or .file-search.yaml in your project directory
+
+# API Key Configuration
+# You can also set via:
+# - Environment variables: GOOGLE_API_KEY or GEMINI_API_KEY
+# - Command flag: --api-key
+# api_key: "your-api-key-here"
+
+# MCP Server Configuration
+# Configure which tools are available in the MCP server
+# Default: ["query"]
+# Available tools: query, import, upload, list, manage
+# You can also set via:
+# - Environment variable: MCP_TOOLS=query,import,list
+# - Command flag: file-search mcp --mcp-tools query,import
+
+# Minimal configuration (default - only query tool)
+# mcp_tools:
+#   - query
+
+# Balanced configuration (query + discovery)
+mcp_tools:
+  - query
+  - list
+
+# Full configuration (all tools enabled)
+# mcp_tools:
+#   - query
+#   - import
+#   - upload
+#   - list
+#   - manage
+
+# Tool Descriptions:
+# - query:  Query Gemini with optional file search and metadata filtering
+# - import: Import files from Files API into stores
+# - upload: Upload and index files directly
+# - list:   List stores, files, and documents
+# - manage: Create/delete stores and documents (full CRUD)
+
+# Shell Completion Configuration
+# Enable or disable dynamic shell completion for resource names
+# Default: true
+completion_enabled: true
+
+# Cache TTL for completion results (reduces API calls)
+# Format: duration string (e.g., "300s", "5m", "1h")
+# Default: 300s (5 minutes)
+completion_cache_ttl: "300s"
+
+# To disable completion (if it causes performance issues):
+# completion_enabled: false
+
+# You can also set via environment variables:
+# export COMPLETION_ENABLED=false
+# export COMPLETION_CACHE_TTL=600s

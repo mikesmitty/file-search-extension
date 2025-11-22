@@ -1,0 +1,24 @@
+name: Test MCP Server
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test-mcp:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      
+      - name: Set up Go
+        uses: actions/setup-go@v6
+        with:
+          go-version-file: 'go.mod'
+          
+      - name: Run MCP integration tests
+        run: go test -v ./internal/mcp/... -run Integration
+        
+      - name: Run all MCP tests
+        run: go test -v ./internal/mcp/...
