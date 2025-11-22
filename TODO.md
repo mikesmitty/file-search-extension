@@ -139,13 +139,13 @@ Show upload/indexing progress during long-running operations.
 - [x] Check `scripts/` for hardcoded binary names.
 - [x] Handle Windows `.exe` extension requirement (e.g., separate config or platform-aware runner).
 
-### 12. Improve MCP Tool Documentation
+### 12. Improve MCP Tool Documentation ✓
 **Priority**: High
-**Status**: Not Started
+**Status**: Completed
 **Goal**: Help the AI model use tools more effectively.
 
-- [ ] Add examples to `metadata_filter` description in `internal/mcp/server.go`.
-- [ ] Add examples to other complex tool parameters (e.g., `metadata` JSON format).
+- [x] Add examples to `metadata_filter` description in `internal/mcp/server.go`.
+- [x] Add examples to other complex tool parameters (e.g., `metadata` JSON format).
 
 ### 13. Enhance Testing Infrastructure
 **Priority**: Medium

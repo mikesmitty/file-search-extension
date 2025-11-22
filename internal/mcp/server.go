@@ -248,7 +248,7 @@ func NewServer(client GeminiClient, enabledTools []string) *server.MCPServer {
 			mcp.WithString("query", mcp.Required(), mcp.Description("The question or query to ask.")),
 			mcp.WithString("store_name", mcp.Description("The resource name or display name of the store to search. If omitted, searches all stores (if supported) or requires specific configuration.")),
 			mcp.WithString("model", mcp.Description("The model to use (default: "+constants.DefaultModel+").")),
-			mcp.WithString("metadata_filter", mcp.Description("Optional metadata filter expression (e.g., 'key = \"value\"').")),
+			mcp.WithString("metadata_filter", mcp.Description("Optional metadata filter expression to narrow search results. Examples: 'category = \"research\"' for exact match, 'status = \"reviewed\" AND priority = \"high\"' for multiple conditions, 'author = \"Smith\"' for filtering by author metadata.")),
 		), func(ctx context.Context, request mcp.CallToolRequest) (*mcp.CallToolResult, error) {
 			args, ok := request.Params.Arguments.(map[string]interface{})
 			if !ok {
@@ -293,7 +293,7 @@ func NewServer(client GeminiClient, enabledTools []string) *server.MCPServer {
 			mcp.WithString("path", mcp.Required(), mcp.Description("Absolute path to the local file.")),
 			mcp.WithString("store_name", mcp.Description("The resource name or display name of the store to add the file to.")),
 			mcp.WithString("mime_type", mcp.Description("The MIME type of the file (optional).")),
-			mcp.WithString("metadata", mcp.Description("Optional metadata as a JSON string (e.g., '{\"key\": \"value\"}'). Only used if store_name is provided.")),
+			mcp.WithString("metadata", mcp.Description("Optional metadata as a JSON string. Examples: '{\"category\": \"research\", \"author\": \"Smith\"}' for multiple fields, '{\"status\": \"draft\"}' for single field, '{\"project\": \"Q4-2024\", \"priority\": \"high\"}' for project tracking. Only used if store_name is provided.")),
 		), func(ctx context.Context, request mcp.CallToolRequest) (*mcp.CallToolResult, error) {
 			args, ok := request.Params.Arguments.(map[string]interface{})
 			if !ok {
