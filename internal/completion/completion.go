@@ -4,9 +4,9 @@ import (
 	"context"
 	"time"
 
-	"github.com/mikesmitty/file-search-extension/internal/constants"
+	"github.com/mikesmitty/file-search/internal/constants"
 
-	"github.com/mikesmitty/file-search-extension/internal/gemini"
+	"github.com/mikesmitty/file-search/internal/gemini"
 )
 
 // Completer provides completion suggestions for CLI arguments

@@ -5,7 +5,7 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/mikesmitty/file-search-extension/internal/gemini"
+	"github.com/mikesmitty/file-search/internal/gemini"
 	"google.golang.org/genai"
 )
 

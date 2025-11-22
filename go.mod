@@ -1,4 +1,4 @@
-module github.com/mikesmitty/file-search-extension
+module github.com/mikesmitty/file-search
 
 go 1.25.4
 

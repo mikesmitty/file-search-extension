@@ -4,7 +4,7 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/mikesmitty/file-search-extension/internal/gemini"
+	"github.com/mikesmitty/file-search/internal/gemini"
 )
 
 // TestMCPServerIntegration verifies that the MCP server exposes all expected tools

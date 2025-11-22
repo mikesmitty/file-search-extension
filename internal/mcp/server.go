@@ -7,8 +7,8 @@ import (
 
 	"github.com/mark3labs/mcp-go/mcp"
 	"github.com/mark3labs/mcp-go/server"
-	"github.com/mikesmitty/file-search-extension/internal/constants"
-	"github.com/mikesmitty/file-search-extension/internal/gemini"
+	"github.com/mikesmitty/file-search/internal/constants"
+	"github.com/mikesmitty/file-search/internal/gemini"
 	"google.golang.org/genai"
 )
 

@@ -6,7 +6,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/mikesmitty/file-search-extension/internal/constants"
+	"github.com/mikesmitty/file-search/internal/constants"
 	"google.golang.org/genai"
 )
 
