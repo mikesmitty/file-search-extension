@@ -10,5 +10,13 @@
       ],
       "cwd": "${workspacePath}"
     }
-  }
+  },
+  "settings": [
+    {
+      "name": "Gemini API Key",
+      "description": "Your Google Gemini API Key",
+      "envVar": "GEMINI_API_KEY",
+      "sensitive": true
+    }
+  ]
 }
