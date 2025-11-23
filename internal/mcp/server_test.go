@@ -234,9 +234,14 @@ func TestListStoresHandler_OutputFormat(t *testing.T) {
 		t.Fatalf("Failed to parse JSON output: %v", err)
 	}
 
-	// Check if it has "stores" key (Object) vs being a list (Array)
-	if _, ok := output["stores"]; !ok {
-		t.Errorf("Expected output to contain 'stores' key, got: %s", textContent.Text)
+	stores, ok := output["stores"]
+	if !ok {
+		t.Errorf("Expected output to have 'stores' key, got: %s", textContent.Text)
+	}
+
+	storesArray, ok := stores.([]interface{})
+	if !ok || len(storesArray) == 0 {
+		t.Errorf("Expected 'stores' to be a non-empty array, got: %s", textContent.Text)
 	}
 }
 
@@ -274,8 +279,14 @@ func TestListFilesHandler_OutputFormat(t *testing.T) {
 		t.Fatalf("Failed to parse JSON output: %v", err)
 	}
 
-	if _, ok := output["files"]; !ok {
-		t.Errorf("Expected output to contain 'files' key, got: %s", textContent.Text)
+	files, ok := output["files"]
+	if !ok {
+		t.Errorf("Expected output to have 'files' key, got: %s", textContent.Text)
+	}
+
+	filesArray, ok := files.([]interface{})
+	if !ok || len(filesArray) == 0 {
+		t.Errorf("Expected 'files' to be a non-empty array, got: %s", textContent.Text)
 	}
 }
 
@@ -318,7 +329,13 @@ func TestListDocumentsHandler_OutputFormat(t *testing.T) {
 		t.Fatalf("Failed to parse JSON output: %v", err)
 	}
 
-	if _, ok := output["documents"]; !ok {
-		t.Errorf("Expected output to contain 'documents' key, got: %s", textContent.Text)
+	documents, ok := output["documents"]
+	if !ok {
+		t.Errorf("Expected output to have 'documents' key, got: %s", textContent.Text)
+	}
+
+	documentsArray, ok := documents.([]interface{})
+	if !ok || len(documentsArray) == 0 {
+		t.Errorf("Expected 'documents' to be a non-empty array, got: %s", textContent.Text)
 	}
 }
