@@ -351,6 +351,7 @@ func (c *Client) ImportFile(ctx context.Context, fileID, storeID string, opts *I
 	startTime := time.Now()
 	iteration := 0
 	if !opts.Quiet {
+		fmt.Printf("Operation ID: %s\n", op.Name)
 		fmt.Print("Importing...")
 	}
 	for !op.Done {
