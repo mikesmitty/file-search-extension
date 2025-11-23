@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.6.0](https://github.com/mikesmitty/file-search/compare/v0.5.1...v0.6.0) (2025-11-23)
+
+
+### Features
+
+* add some quality of life tweaks to query ([#55](https://github.com/mikesmitty/file-search/issues/55)) ([7f4f7e4](https://github.com/mikesmitty/file-search/commit/7f4f7e401b8dd0323e759568cfd0437d03eba4a6))
+* allow batch uploads ([#59](https://github.com/mikesmitty/file-search/issues/59)) ([adc2c6e](https://github.com/mikesmitty/file-search/commit/adc2c6ee1ff185e91ffced1702bc6d7a95ca551a))
+* improve plaintext output with grounding results ([#57](https://github.com/mikesmitty/file-search/issues/57)) ([8487601](https://github.com/mikesmitty/file-search/commit/848760186f63ff388bb3264edf1090d06712cbb8))
+
 ## [0.5.1](https://github.com/mikesmitty/file-search/compare/v0.5.0...v0.5.1) (2025-11-23)
 
 
