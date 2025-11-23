@@ -53,26 +53,6 @@ func NewServer(client GeminiClient, enabledTools []string) *server.MCPServer {
 		return false
 	}
 
-	// Helper to get string argument
-	getStringArg := func(args map[string]interface{}, key string) (string, bool) {
-		val, ok := args[key]
-		if !ok {
-			return "", false
-		}
-		str, ok := val.(string)
-		return str, ok
-	}
-
-	// Helper to get bool argument
-	getBoolArg := func(args map[string]interface{}, key string) bool {
-		val, ok := args[key]
-		if !ok {
-			return false
-		}
-		b, ok := val.(bool)
-		return b && ok
-	}
-
 	// Tool: list_stores
 	if isToolEnabled("list_stores") || isToolEnabled("all") {
 		s.AddTool(mcp.NewTool("list_stores",
@@ -249,41 +229,7 @@ func NewServer(client GeminiClient, enabledTools []string) *server.MCPServer {
 			mcp.WithString("store_name", mcp.Description("The resource name or display name of the store to search. If omitted, searches all stores (if supported) or requires specific configuration.")),
 			mcp.WithString("model", mcp.Description("The model to use (default: "+constants.DefaultModel+").")),
 			mcp.WithString("metadata_filter", mcp.Description("Optional metadata filter expression to narrow search results. Examples: 'category = \"research\"' for exact match, 'status = \"reviewed\" AND priority = \"high\"' for multiple conditions, 'author = \"Smith\"' for filtering by author metadata.")),
-		), func(ctx context.Context, request mcp.CallToolRequest) (*mcp.CallToolResult, error) {
-			args, ok := request.Params.Arguments.(map[string]interface{})
-			if !ok {
-				return mcp.NewToolResultError("arguments must be a map"), nil
-			}
-			query, ok := getStringArg(args, "query")
-			if !ok {
-				return mcp.NewToolResultError("query must be a string"), nil
-			}
-			storeName, _ := getStringArg(args, "store_name")
-			model, _ := getStringArg(args, "model")
-			if model == "" {
-				model = constants.DefaultModel
-			}
-			metadataFilter, _ := getStringArg(args, "metadata_filter")
-
-			var storeID string
-			var err error
-			if storeName != "" {
-				storeID, err = client.ResolveStoreName(ctx, storeName)
-				if err != nil {
-					return mcp.NewToolResultError(fmt.Sprintf("Failed to resolve store name: %v", err)), nil
-				}
-			}
-
-			resp, err := client.Query(ctx, query, storeID, model, metadataFilter)
-			if err != nil {
-				return mcp.NewToolResultError(err.Error()), nil
-			}
-			res, err := mcp.NewToolResultJSON(resp)
-			if err != nil {
-				return mcp.NewToolResultError(err.Error()), nil
-			}
-			return res, nil
-		})
+		), makeQueryKnowledgeBaseHandler(client))
 	}
 
 	// Tool: upload_file
@@ -418,4 +364,66 @@ func NewServer(client GeminiClient, enabledTools []string) *server.MCPServer {
 	}
 
 	return s
+}
+
+// Helper to get string argument
+func getStringArg(args map[string]interface{}, key string) (string, bool) {
+	val, ok := args[key]
+	if !ok {
+		return "", false
+	}
+	str, ok := val.(string)
+	return str, ok
+}
+
+// Helper to get bool argument
+func getBoolArg(args map[string]interface{}, key string) bool {
+	val, ok := args[key]
+	if !ok {
+		return false
+	}
+	b, ok := val.(bool)
+	return b && ok
+}
+
+func makeQueryKnowledgeBaseHandler(client GeminiClient) func(ctx context.Context, request mcp.CallToolRequest) (*mcp.CallToolResult, error) {
+	return func(ctx context.Context, request mcp.CallToolRequest) (*mcp.CallToolResult, error) {
+		if client == nil {
+			return mcp.NewToolResultError("Gemini API key not configured. Please set GEMINI_API_KEY environment variable."), nil
+		}
+
+		args, ok := request.Params.Arguments.(map[string]interface{})
+		if !ok {
+			return mcp.NewToolResultError("arguments must be a map"), nil
+		}
+		query, ok := getStringArg(args, "query")
+		if !ok {
+			return mcp.NewToolResultError("query must be a string"), nil
+		}
+		storeName, _ := getStringArg(args, "store_name")
+		model, _ := getStringArg(args, "model")
+		if model == "" {
+			model = constants.DefaultModel
+		}
+		metadataFilter, _ := getStringArg(args, "metadata_filter")
+
+		var storeID string
+		var err error
+		if storeName != "" {
+			storeID, err = client.ResolveStoreName(ctx, storeName)
+			if err != nil {
+				return mcp.NewToolResultError(fmt.Sprintf("Failed to resolve store name: %v", err)), nil
+			}
+		}
+
+		resp, err := client.Query(ctx, query, storeID, model, metadataFilter)
+		if err != nil {
+			return mcp.NewToolResultError(err.Error()), nil
+		}
+		res, err := mcp.NewToolResultJSON(resp)
+		if err != nil {
+			return mcp.NewToolResultError(err.Error()), nil
+		}
+		return res, nil
+	}
 }

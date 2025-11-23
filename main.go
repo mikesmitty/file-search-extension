@@ -819,14 +819,14 @@ func main() {
 			// Tools will fail gracefully when invoked if auth is missing.
 			key, _ := getAPIKey()
 
-			var client *gemini.Client
-			var err error
+			var client mcp.GeminiClient
 			if key != "" {
-				client, err = gemini.NewClient(ctx, key)
+				c, err := gemini.NewClient(ctx, key)
 				if err != nil {
 					return err
 				}
-				defer client.Close()
+				defer c.Close()
+				client = c
 			}
 
 			tools := getMCPTools()
