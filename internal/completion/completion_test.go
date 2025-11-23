@@ -94,8 +94,12 @@ func TestCompleterGetModelNames(t *testing.T) {
 
 		// Check for expected models
 		expectedModels := map[string]bool{
-			"gemini-2.5-flash": true,
-			"gemini-2.5-pro":   true,
+			"gemini-3-pro-preview":          true,
+			"gemini-2.5-pro":                true,
+			"gemini-2.5-flash":              true,
+			"gemini-2.5-flash-preview":      true,
+			"gemini-2.5-flash-lite":         true,
+			"gemini-2.5-flash-lite-preview": true,
 		}
 
 		for _, model := range models {
