@@ -115,6 +115,25 @@ Show upload/indexing progress during long-running operations.
   - Global flag: `main.go:24,39`
 - **Implementation**: Simple progress (iteration + time) without external dependencies
 
+### 9. Batch Operations ✓
+Support glob patterns and multiple files for upload and import.
+- **Features**:
+  - Accepts multiple file arguments
+  - Expands shell glob patterns (e.g., `*.pdf`, `docs/*.md`)
+  - Processes files in parallel with configurable concurrency (default: 5)
+  - Shows progress for batch operations
+  - Continues on individual failures without stopping entire batch
+  - Summary report: "X succeeded, Y failed"
+  - Exit code 1 if any file fails
+- **Commands**:
+  - `file-search file upload *.pdf --store "Research"`
+  - `file-search file upload docs/*.md notes/*.txt --store "Documentation"`
+  - `file-search store import-file file1.pdf file2.pdf file3.pdf --store "Research"`
+- **Implementation**:
+  - Parallel processing with worker pool
+  - Comprehensive error collection and reporting
+  - Integration with progress indicators
+
 ---
 
 ## 🛠 Code Review Improvements (High Priority)
@@ -129,6 +148,23 @@ Show upload/indexing progress during long-running operations.
 - [x] Replace all hardcoded occurrences with these constants.
 - [x] Remove hardcoded model list in `internal/completion/completion.go` and fetch dynamically or use shared constant.
 
+### 12. Improve MCP Tool Documentation ✓
+**Priority**: High
+**Status**: Completed
+**Goal**: Help the AI model use tools more effectively.
+
+- [x] Add examples to `metadata_filter` description in `internal/mcp/server.go`.
+- [x] Add examples to other complex tool parameters (e.g., `metadata` JSON format).
+
+### 13. Enhance Testing Infrastructure ✓
+**Priority**: Medium
+**Status**: Completed
+**Goal**: Enable deterministic and end-to-end testing.
+
+- [ ] Implement Record/Replay tests using `go-vcr` to mock API calls.
+- [ ] Create End-to-End (E2E) test suite for full flow verification (provision -> upload -> query -> delete).
+- [x] Update CI workflow to test against multiple Go versions (matrix: stable, oldstable, go.mod?).
+
 ### 14. Binary Name Consistency ✓
 **Priority**: High
 **Status**: Completed
@@ -139,26 +175,9 @@ Show upload/indexing progress during long-running operations.
 - [x] Check `scripts/` for hardcoded binary names.
 - [x] Handle Windows `.exe` extension requirement (e.g., separate config or platform-aware runner).
 
-### 12. Improve MCP Tool Documentation ✓
-**Priority**: High
+### 15. Documentation & Scripts Updates ✓
+**Priority**: Medium
 **Status**: Completed
-**Goal**: Help the AI model use tools more effectively.
-
-- [x] Add examples to `metadata_filter` description in `internal/mcp/server.go`.
-- [x] Add examples to other complex tool parameters (e.g., `metadata` JSON format).
-
-### 13. Enhance Testing Infrastructure
-**Priority**: Medium
-**Status**: Not Started
-**Goal**: Enable deterministic and end-to-end testing.
-
-- [ ] Implement Record/Replay tests using `go-vcr` to mock API calls.
-- [ ] Create End-to-End (E2E) test suite for full flow verification (provision -> upload -> query -> delete).
-- [x] Update CI workflow to test against multiple Go versions (matrix: stable, oldstable, go.mod?).
-
-### 15. Documentation & Scripts Updates
-**Priority**: Medium
-**Status**: Not Started
 **Goal**: Ensure documentation and examples match the actual code behavior.
 
 - [x] Update `GEMINI.md` to list all available MCP tools (currently only lists `query`).
@@ -166,23 +185,23 @@ Show upload/indexing progress during long-running operations.
 - [x] Fix `.file-search.yaml.example`: The `list` and `manage` tool groups are mentioned but not implemented in `server.go`. Either implement them or update the example to use specific tool names.
 - [x] Verify `scripts/test_integration.sh` works with the final binary name.
 
-### 16. Performance Improvements
-**Priority**: Medium
-**Status**: Not Started
-**Goal**: Improve efficiency of long-running operations.
-
-- [ ] Implement exponential backoff for operation polling (import/upload checks currently poll every 2s regardless of operation duration).
-
-### 17. Alternative Installation Workflow
+### 20. Alternative Installation Workflow ✓
 **Priority**: Low
-**Status**: Not Started
+**Status**: Completed
 **Goal**: Simplify installation and MCP server registration for end users.
 
-- [ ] Investigate using Gemini CLI's `gemini mcp add` workflow instead of manual extension installation.
-- [ ] Research requirements: https://geminicli.com/docs/tools/mcp-server/#adding-a-server-gemini-mcp-add
-- [ ] Determine if we need to publish the CLI tool to package managers (brew, etc.) first.
-- [ ] Set up Homebrew tap for `brew install file-search` (see goreleaser brew config).
-- [ ] Update documentation to include this alternative installation method if viable.
+- [x] Investigate using Gemini CLI's `gemini mcp add` workflow instead of manual extension installation.
+- [x] Documented in README.md under "Gemini > Option 1: As an MCP Server".
+
+### 21. Homebrew Installation Support
+**Priority**: Low
+**Status**: Not Started
+**Goal**: Allow users to install via `brew install file-search`.
+
+- [ ] Create Homebrew tap repository (e.g., `mikesmitty/homebrew-tap`).
+- [ ] Configure goreleaser to publish to the tap.
+- [ ] Verify installation with `brew install mikesmitty/tap/file-search`.
+- [ ] Update documentation with Homebrew installation instructions.
 
 ### 18. Display Grounding Details ✓
 **Priority**: Medium
@@ -194,88 +213,16 @@ Show upload/indexing progress during long-running operations.
 - [x] Format grounding attribution in a user-friendly way (e.g., "From: documentName.pdf, Page X").
 - [x] Ensure JSON output already includes full grounding details (verify current implementation).
 
----
+### 19. Pagination Support ✓
+**Priority**: High
+**Status**: Completed
+**Goal**: Ensure all resources are listed, not just the first page.
 
-## 📋 Remaining Features (Phase 5+)
-
-### 9. Document Update
-**Priority**: Medium
-**Status**: Not Started
-**Dependency**: Check if Gemini API supports this
-
-Update document metadata without re-uploading:
-
-```bash
-file-search document update <doc-id> --metadata "status=reviewed"
-file-search document update <doc-name> --store "Research" --metadata "category=important"
-```
-
-**Implementation Notes**:
-- Check if `client.FileSearchStores.Documents.Update()` exists in genai SDK
-- Support both document resource IDs and friendly names
-- Allow updating metadata fields individually
-- Preserve existing metadata unless explicitly overwritten
-
-**Research Needed**:
-- [ ] Verify API support: `go doc google.golang.org/genai.Documents | grep -i update`
-- [ ] Check if partial updates are supported or if full document must be provided
-
----
-
-
-### 10. Operation List Command
-**Priority**: Medium
-**Status**: Not Started
-**Goal**: Allow users to discover and track long-running operations without needing the operation ID.
-
-Add `operation list` command to list all operations for a store:
-
-```bash
-file-search operation list --store "StoreName"
-file-search operation list --store-id "fileSearchStores/xyz"
-file-search operation list --store "StoreName" --status pending
-file-search operation list --store "StoreName" --type import
-```
-
-**Implementation Notes**:
-- Check if `client.Operations.List()` or similar exists in genai SDK
-- Support filtering by status (pending, done, failed)
-- Support filtering by type (import, upload)
-- Display operation ID, type, status, and creation time
-- Support both text and JSON output formats
-- Include name resolution for store parameter
-
-**Research Needed**:
-- [ ] Verify API support for listing operations: `go doc google.golang.org/genai.Operations`
-- [ ] Check if operations can be listed per-store or globally
-
----
-
-
-### 11. Batch Operations
-**Priority**: Low
-**Status**: Not Started
-
-Support glob patterns and multiple files:
-
-```bash
-file-search file upload *.pdf --store "Research"
-file-search file upload docs/*.md notes/*.txt --store "Documentation"
-file-search store import-file file1.pdf file2.pdf file3.pdf --store "Research"
-```
-
-**Implementation Notes**:
-- Accept multiple file arguments
-- Expand glob patterns using `filepath.Glob()`
-- Process files in parallel (with configurable concurrency)
-- Show progress for batch operations
-- Report failures without stopping entire batch
-- Summary at end: "3 succeeded, 1 failed"
-
-**Error Handling**:
-- Continue on individual failures
-- Collect all errors and report at end
-- Exit code reflects overall success/failure
+- [x] Implement pagination for `ListStores`
+- [x] Implement pagination for `ListFiles`
+- [x] Implement pagination for `ListDocuments`
+- [x] Implement pagination for `ListModels`
+- [x] Verify `Resolve*` and `Get*Names` helpers use paginated lists
 
 ---
 
@@ -292,9 +239,8 @@ file-search store import-file file1.pdf file2.pdf file3.pdf --store "Research"
 ### Phase 4 (Nice to Have) ✅ COMPLETED
 5. ✅ **Progress Indicators** (#8) - Simple progress with --quiet flag
 
-### Phase 5 (Lower Priority)
-6. **Document Update** (#9) - If API supports it (requires research)
-7. **Batch Operations** (#10) - Useful but can be scripted externally
+### Phase 5 (Lower Priority) ✅ COMPLETED
+6. ✅ **Batch Operations** (#9) - Multiple files with glob patterns and parallel processing
 
 ---
 
@@ -311,7 +257,4 @@ file-search store import-file file1.pdf file2.pdf file3.pdf --store "Research"
 - Keep TESTING.md in sync with new functionality
 - Add examples for each new command to docs
 
-### API Research Needed
-- [ ] Document update support (`Documents.Update` or `Documents.Patch`)
-- [ ] Operation progress details (beyond just `Done` boolean)
-- [ ] Batch import API (if available)
+
