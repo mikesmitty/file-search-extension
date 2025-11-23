@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.4.0](https://github.com/mikesmitty/file-search/compare/v0.3.2...v0.4.0) (2025-11-23)
+
+
+### Features
+
+* add name parameter to upload_file tool ([#41](https://github.com/mikesmitty/file-search/issues/41)) ([3da4815](https://github.com/mikesmitty/file-search/commit/3da48151e14cda1af4dda14d4b599d3c7dfa6fef))
+
+
+### Bug Fixes
+
+* update MCP list tools to return objects instead of arrays ([#37](https://github.com/mikesmitty/file-search/issues/37)) ([9402f74](https://github.com/mikesmitty/file-search/commit/9402f7432fdecdf0653d616c7e14c813177f68b5))
+
 ## [0.3.2](https://github.com/mikesmitty/file-search/compare/v0.3.1...v0.3.2) (2025-11-23)
 
 
