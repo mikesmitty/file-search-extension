@@ -289,15 +289,13 @@ func (c *Client) UploadFile(ctx context.Context, path string, opts *UploadFileOp
 
 		// Poll with optional progress indicator
 		startTime := time.Now()
-		iteration := 0
 		if !opts.Quiet {
 			fmt.Print("Indexing...")
 		}
 		for !op.Done {
-			iteration++
 			if !opts.Quiet {
 				elapsed := time.Since(startTime)
-				fmt.Printf("\rIndexing... (%d checks, %s elapsed)", iteration, elapsed.Round(time.Second))
+				fmt.Printf("\rIndexing... (%s elapsed)", elapsed.Round(time.Second))
 			}
 
 			time.Sleep(2 * time.Second)
@@ -349,16 +347,14 @@ func (c *Client) ImportFile(ctx context.Context, fileID, storeID string, opts *I
 
 	// Poll operation until complete with optional progress indicator
 	startTime := time.Now()
-	iteration := 0
 	if !opts.Quiet {
 		fmt.Printf("Operation ID: %s\n", op.Name)
 		fmt.Print("Importing...")
 	}
 	for !op.Done {
-		iteration++
 		if !opts.Quiet {
 			elapsed := time.Since(startTime)
-			fmt.Printf("\rImporting... (%d checks, %s elapsed)", iteration, elapsed.Round(time.Second))
+			fmt.Printf("\rImporting... (%s elapsed)", elapsed.Round(time.Second))
 		}
 
 		time.Sleep(2 * time.Second)
