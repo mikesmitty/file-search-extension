@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.5.0](https://github.com/mikesmitty/file-search/compare/v0.4.0...v0.5.0) (2025-11-23)
+
+
+### Features
+
+* add force flag to document deletion ([#45](https://github.com/mikesmitty/file-search/issues/45)) ([a7e5c5f](https://github.com/mikesmitty/file-search/commit/a7e5c5f7916488d561c54342f5a8db2b17b1bec5))
+* add newly added models to completion list ([#47](https://github.com/mikesmitty/file-search/issues/47)) ([32580b4](https://github.com/mikesmitty/file-search/commit/32580b4d1fbb0b471e666643b995016025dc2bd0))
+* print operation ID in import-file command ([#46](https://github.com/mikesmitty/file-search/issues/46)) ([c1649fc](https://github.com/mikesmitty/file-search/commit/c1649fc3d5f1f40ff4b5cf49dfea526eb1bdff9b))
+
+
+### Bug Fixes
+
+* add more subcommand aliases ([#43](https://github.com/mikesmitty/file-search/issues/43)) ([ee1c9d7](https://github.com/mikesmitty/file-search/commit/ee1c9d7d77971a72069b9021c6136e2dae920698))
+
 ## [0.4.0](https://github.com/mikesmitty/file-search/compare/v0.3.2...v0.4.0) (2025-11-23)
 
 
