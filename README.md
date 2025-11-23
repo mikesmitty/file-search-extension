@@ -138,7 +138,7 @@ This tool functions as a Model Context Protocol (MCP) server, allowing AI assist
 ### Antigravity
 To use with Antigravity, ensure the `file-search` binary is in your path or referenced correctly in your configuration.
 
-*(Installation details for Antigravity to be added)*
+See [Antigravity MCP docs](https://antigravity.google/docs/mcp#connecting-custom-mcp-servers)
 
 ### Gemini
 
