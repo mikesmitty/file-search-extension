@@ -61,7 +61,18 @@ func (c *Client) ListStores(ctx context.Context) ([]*genai.FileSearchStore, erro
 	if err != nil {
 		return nil, err
 	}
-	return resp.Items, nil
+
+	var stores []*genai.FileSearchStore
+	stores = append(stores, resp.Items...)
+
+	for resp.NextPageToken != "" {
+		resp, err = resp.Next(ctx)
+		if err != nil {
+			return nil, err
+		}
+		stores = append(stores, resp.Items...)
+	}
+	return stores, nil
 }
 
 func (c *Client) ListModels(ctx context.Context) ([]*genai.Model, error) {
@@ -92,12 +103,12 @@ func (c *Client) ResolveStoreName(ctx context.Context, nameOrID string) (string,
 	}
 
 	// Otherwise, search for display name
-	resp, err := c.client.FileSearchStores.List(ctx, nil)
+	stores, err := c.ListStores(ctx)
 	if err != nil {
 		return "", err
 	}
 
-	for _, s := range resp.Items {
+	for _, s := range stores {
 		if s.DisplayName == nameOrID {
 			return s.Name, nil
 		}
@@ -115,12 +126,12 @@ func (c *Client) ResolveFileName(ctx context.Context, nameOrID string) (string, 
 	}
 
 	// Otherwise, search for display name
-	resp, err := c.client.Files.List(ctx, nil)
+	files, err := c.ListFiles(ctx)
 	if err != nil {
 		return "", err
 	}
 
-	for _, f := range resp.Items {
+	for _, f := range files {
 		if f.DisplayName == nameOrID {
 			return f.Name, nil
 		}
@@ -145,12 +156,12 @@ func (c *Client) ResolveDocumentName(ctx context.Context, storeNameOrID, docName
 	}
 
 	// Search for document by display name
-	resp, err := c.client.FileSearchStores.Documents.List(ctx, storeID, nil)
+	docs, err := c.ListDocuments(ctx, storeID)
 	if err != nil {
 		return "", err
 	}
 
-	for _, doc := range resp.Items {
+	for _, doc := range docs {
 		if doc.DisplayName == docNameOrID {
 			return doc.Name, nil
 		}
@@ -161,13 +172,13 @@ func (c *Client) ResolveDocumentName(ctx context.Context, storeNameOrID, docName
 
 // GetStoreNames returns a list of all store display names for completion.
 func (c *Client) GetStoreNames(ctx context.Context) ([]string, error) {
-	resp, err := c.client.FileSearchStores.List(ctx, nil)
+	stores, err := c.ListStores(ctx)
 	if err != nil {
 		return nil, err
 	}
 
-	names := make([]string, 0, len(resp.Items))
-	for _, s := range resp.Items {
+	names := make([]string, 0, len(stores))
+	for _, s := range stores {
 		names = append(names, s.DisplayName)
 	}
 	return names, nil
@@ -175,13 +186,13 @@ func (c *Client) GetStoreNames(ctx context.Context) ([]string, error) {
 
 // GetFileNames returns a list of all file display names for completion.
 func (c *Client) GetFileNames(ctx context.Context) ([]string, error) {
-	resp, err := c.client.Files.List(ctx, nil)
+	files, err := c.ListFiles(ctx)
 	if err != nil {
 		return nil, err
 	}
 
-	names := make([]string, 0, len(resp.Items))
-	for _, f := range resp.Items {
+	names := make([]string, 0, len(files))
+	for _, f := range files {
 		names = append(names, f.DisplayName)
 	}
 	return names, nil
@@ -189,13 +200,13 @@ func (c *Client) GetFileNames(ctx context.Context) ([]string, error) {
 
 // GetDocumentNames returns a list of all document display names in a store for completion.
 func (c *Client) GetDocumentNames(ctx context.Context, storeID string) ([]string, error) {
-	resp, err := c.client.FileSearchStores.Documents.List(ctx, storeID, nil)
+	docs, err := c.ListDocuments(ctx, storeID)
 	if err != nil {
 		return nil, err
 	}
 
-	names := make([]string, 0, len(resp.Items))
-	for _, doc := range resp.Items {
+	names := make([]string, 0, len(docs))
+	for _, doc := range docs {
 		names = append(names, doc.DisplayName)
 	}
 	return names, nil
@@ -377,7 +388,18 @@ func (c *Client) ListFiles(ctx context.Context) ([]*genai.File, error) {
 	if err != nil {
 		return nil, err
 	}
-	return resp.Items, nil
+
+	var files []*genai.File
+	files = append(files, resp.Items...)
+
+	for resp.NextPageToken != "" {
+		resp, err = resp.Next(ctx)
+		if err != nil {
+			return nil, err
+		}
+		files = append(files, resp.Items...)
+	}
+	return files, nil
 }
 
 func (c *Client) GetFile(ctx context.Context, name string) (*genai.File, error) {
@@ -389,7 +411,18 @@ func (c *Client) ListDocuments(ctx context.Context, storeName string) ([]*genai.
 	if err != nil {
 		return nil, err
 	}
-	return resp.Items, nil
+
+	var docs []*genai.Document
+	docs = append(docs, resp.Items...)
+
+	for resp.NextPageToken != "" {
+		resp, err = resp.Next(ctx)
+		if err != nil {
+			return nil, err
+		}
+		docs = append(docs, resp.Items...)
+	}
+	return docs, nil
 }
 
 func (c *Client) GetDocument(ctx context.Context, name string) (*genai.Document, error) {
