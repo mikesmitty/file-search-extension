@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
+	"regexp"
 	"strings"
 	"time"
 
@@ -22,6 +23,8 @@ var (
 	outputFormat string
 	mcpTools     string
 	quiet        bool
+	verbose      bool
+	debug        bool
 
 	// Build info - set by main package
 	Version = "dev"
@@ -46,6 +49,8 @@ func init() {
 	rootCmd.PersistentFlags().StringVar(&apiKeyEnv, "api-key-env", "", "Environment variable to read API Key from")
 	rootCmd.PersistentFlags().StringVar(&outputFormat, "format", "text", "Output format: text or json")
 	rootCmd.PersistentFlags().BoolVarP(&quiet, "quiet", "q", false, "Suppress progress indicators")
+	rootCmd.PersistentFlags().BoolVarP(&verbose, "verbose", "v", false, "Enable verbose output")
+	rootCmd.PersistentFlags().BoolVar(&debug, "debug", false, "Enable debug output (JSON)")
 
 	viper.BindPFlag("api_key", rootCmd.PersistentFlags().Lookup("api-key"))
 	viper.BindPFlag("api_key_env", rootCmd.PersistentFlags().Lookup("api-key-env"))
@@ -222,7 +227,98 @@ func printOutput(data interface{}, format string) error {
 				fmt.Printf("%v\n", part.Text)
 			}
 			if cand.GroundingMetadata != nil {
-				fmt.Printf("\n[Grounding Metadata Found]\n")
+				fmt.Printf("\n[Grounding Metadata]\n")
+
+				// Debug output: Print full metadata as JSON if --debug is set
+				if debug {
+					debugJSON, err := json.MarshalIndent(cand.GroundingMetadata, "", "  ")
+					if err == nil {
+						fmt.Println(string(debugJSON))
+					}
+				}
+
+				if len(cand.GroundingMetadata.GroundingChunks) > 0 {
+					fmt.Println("\nSources:")
+					for i, chunk := range cand.GroundingMetadata.GroundingChunks {
+						if chunk.Web != nil {
+							fmt.Printf("  %d. [Web] %s (%s)\n", i+1, chunk.Web.Title, chunk.Web.URI)
+						} else if chunk.RetrievedContext != nil {
+							title := chunk.RetrievedContext.Title
+							if title == "" {
+								title = "Unknown Document"
+							}
+
+							// Build location string (URI and/or Page)
+							var locParts []string
+							if chunk.RetrievedContext.URI != "" {
+								locParts = append(locParts, fmt.Sprintf("URI: %s", chunk.RetrievedContext.URI))
+							}
+
+							// Check for RAGChunk page numbers
+							if chunk.RetrievedContext.RAGChunk != nil && chunk.RetrievedContext.RAGChunk.PageSpan != nil {
+								span := chunk.RetrievedContext.RAGChunk.PageSpan
+								if span.FirstPage > 0 {
+									if span.FirstPage == span.LastPage || span.LastPage == 0 {
+										locParts = append(locParts, fmt.Sprintf("Page %d", span.FirstPage))
+									} else {
+										locParts = append(locParts, fmt.Sprintf("Pages %d-%d", span.FirstPage, span.LastPage))
+									}
+								}
+							}
+
+							// Fallback: Extract page number from text using regex
+							// Look for pattern like "--- PAGE 17 ---"
+							if chunk.RetrievedContext.Text != "" {
+								re := regexp.MustCompile(`--- PAGE (\d+) ---`)
+								matches := re.FindStringSubmatch(chunk.RetrievedContext.Text)
+								if len(matches) > 1 {
+									// Only add if we haven't already added a page number from RAGChunk
+									alreadyHasPage := false
+									for _, part := range locParts {
+										if strings.Contains(part, "Page") {
+											alreadyHasPage = true
+											break
+										}
+									}
+									if !alreadyHasPage {
+										locParts = append(locParts, fmt.Sprintf("Page %s", matches[1]))
+									}
+								}
+							}
+
+							locStr := ""
+							if len(locParts) > 0 {
+								locStr = fmt.Sprintf(" (%s)", strings.Join(locParts, ", "))
+							}
+
+							fmt.Printf("  %d. [Doc] %s%s\n", i+1, title, locStr)
+
+							if chunk.RetrievedContext.Text != "" {
+								text := chunk.RetrievedContext.Text
+
+								if verbose {
+									// Verbose mode: Print full text but collapse excessive newlines
+									// Replace 3+ newlines with 2
+									re := regexp.MustCompile(`\n{3,}`)
+									text = re.ReplaceAllString(text, "\n\n")
+									fmt.Printf("     Full Text:\n%s\n", text)
+								} else {
+									// Default mode: Clean up snippet (single line)
+									text = strings.ReplaceAll(text, "\n", " ")
+									text = strings.ReplaceAll(text, "\r", " ")
+									text = strings.Join(strings.Fields(text), " ") // Collapse multiple spaces
+
+									// Truncate text if too long
+									if len(text) > 200 {
+										text = text[:197] + "..."
+									}
+									// Indent the snippet
+									fmt.Printf("     Snippet: %s\n", text)
+								}
+							}
+						}
+					}
+				}
 			}
 		}
 	case *gemini.OperationStatus:
