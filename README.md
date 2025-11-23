@@ -13,7 +13,7 @@ All release artifacts are signed using [Cosign](https://github.com/sigstore/cosi
 <!-- x-release-please-start-version -->
 ```bash
 cosign verify-blob \
-  --certificate-identity "https://github.com/mikesmitty/file-search/.github/workflows/release.yml@refs/tags/v0.5.0" \
+  --certificate-identity "https://github.com/mikesmitty/file-search/.github/workflows/release.yml@refs/tags/v0.5.1" \
   --certificate-oidc-issuer "https://token.actions.githubusercontent.com" \
   --bundle checksums.txt.sigstore.json \
   checksums.txt

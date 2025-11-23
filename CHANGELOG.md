@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.5.1](https://github.com/mikesmitty/file-search/compare/v0.5.0...v0.5.1) (2025-11-23)
+
+
+### Bug Fixes
+
+* trigger goreleaser workflow via tag ([#51](https://github.com/mikesmitty/file-search/issues/51)) ([fcdb621](https://github.com/mikesmitty/file-search/commit/fcdb62102ab5c062ca4b381436510db09008ee20))
+
 ## [0.5.0](https://github.com/mikesmitty/file-search/compare/v0.4.0...v0.5.0) (2025-11-23)
 
 
