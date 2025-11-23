@@ -154,7 +154,7 @@ Show upload/indexing progress during long-running operations.
 
 - [ ] Implement Record/Replay tests using `go-vcr` to mock API calls.
 - [ ] Create End-to-End (E2E) test suite for full flow verification (provision -> upload -> query -> delete).
-- [ ] Update CI workflow to test against multiple Go versions (matrix: stable, oldstable, go.mod?).
+- [x] Update CI workflow to test against multiple Go versions (matrix: stable, oldstable, go.mod?).
 
 ### 15. Documentation & Scripts Updates
 **Priority**: Medium
