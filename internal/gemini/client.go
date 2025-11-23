@@ -251,7 +251,10 @@ func (c *Client) UploadFile(ctx context.Context, path string, opts *UploadFileOp
 			fmt.Printf("Uploading %s to store %s...\n", path, opts.StoreName)
 		}
 
-		config := &genai.UploadToFileSearchStoreConfig{}
+		config := &genai.UploadToFileSearchStoreConfig{
+			DisplayName: opts.DisplayName,
+			MIMEType:    opts.MIMEType,
+		}
 
 		// Add chunking config if specified
 		if opts.MaxChunkTokens > 0 || opts.ChunkOverlap > 0 {
@@ -313,12 +316,9 @@ func (c *Client) UploadFile(ctx context.Context, path string, opts *UploadFileOp
 	}
 
 	// Just upload to Files API
-	config := &genai.UploadFileConfig{}
-	if opts.DisplayName != "" {
-		config.DisplayName = opts.DisplayName
-	}
-	if opts.MIMEType != "" {
-		config.MIMEType = opts.MIMEType
+	config := &genai.UploadFileConfig{
+		DisplayName: opts.DisplayName,
+		MIMEType:    opts.MIMEType,
 	}
 	// Note: metadata might not be supported for Files API uploads
 	// Only chunking config is for store uploads

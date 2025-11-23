@@ -24,7 +24,7 @@ func TestMCPServerIntegration(t *testing.T) {
 		"delete_store":         {"store_name"},
 		"import_file_to_store": {"file_name", "store_name"},
 		"query_knowledge_base": {"query"},
-		"upload_file":          {"path"},
+		"upload_file":          {"path", "name"},
 		"delete_file":          {"file_name"},
 		"delete_document":      {"store_name", "document_name"},
 	}

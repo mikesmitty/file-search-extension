@@ -193,61 +193,10 @@ func NewServer(client GeminiClient, enabledTools []string) *server.MCPServer {
 			mcp.WithDescription("Upload a local file to Gemini Files API and optionally add it to a store."),
 			mcp.WithString("path", mcp.Required(), mcp.Description("Absolute path to the local file.")),
 			mcp.WithString("store_name", mcp.Description("The resource name or display name of the store to add the file to.")),
+			mcp.WithString("name", mcp.Description("The display name of the file (optional).")),
 			mcp.WithString("mime_type", mcp.Description("The MIME type of the file (optional).")),
 			mcp.WithString("metadata", mcp.Description("Optional metadata as a JSON string. Examples: '{\"category\": \"research\", \"author\": \"Smith\"}' for multiple fields, '{\"status\": \"draft\"}' for single field, '{\"project\": \"Q4-2024\", \"priority\": \"high\"}' for project tracking. Only used if store_name is provided.")),
-		), func(ctx context.Context, request mcp.CallToolRequest) (*mcp.CallToolResult, error) {
-			args, ok := request.Params.Arguments.(map[string]interface{})
-			if !ok {
-				return mcp.NewToolResultError("arguments must be a map"), nil
-			}
-			path, ok := getStringArg(args, "path")
-			if !ok {
-				return mcp.NewToolResultError("path must be a string"), nil
-			}
-			storeName, _ := getStringArg(args, "store_name")
-			mimeType, _ := getStringArg(args, "mime_type")
-			metadataJSON, _ := getStringArg(args, "metadata")
-
-			var metadata map[string]string
-			if metadataJSON != "" {
-				// Try to parse as JSON map[string]string
-				if err := json.Unmarshal([]byte(metadataJSON), &metadata); err != nil {
-					return mcp.NewToolResultError(fmt.Sprintf("Failed to parse metadata JSON: %v", err)), nil
-				}
-			}
-
-			var storeID string
-			var err error
-			if storeName != "" {
-				storeID, err = client.ResolveStoreName(ctx, storeName)
-				if err != nil {
-					return mcp.NewToolResultError(fmt.Sprintf("Failed to resolve store name: %v", err)), nil
-				}
-			}
-
-			opts := &gemini.UploadFileOptions{
-				StoreName: storeID,
-				MIMEType:  mimeType,
-				Metadata:  metadata,
-				Quiet:     true, // Suppress stdout progress
-			}
-
-			file, err := client.UploadFile(ctx, path, opts)
-			if err != nil {
-				return mcp.NewToolResultError(err.Error()), nil
-			}
-
-			// If file is nil, it means it was uploaded to a store (UploadFile returns nil for store uploads as it handles the operation)
-			if file == nil {
-				return mcp.NewToolResultText(fmt.Sprintf("Uploaded %s to store %s", path, storeName)), nil
-			}
-
-			res, err := mcp.NewToolResultJSON(file)
-			if err != nil {
-				return mcp.NewToolResultError(err.Error()), nil
-			}
-			return res, nil
-		})
+		), makeUploadFileHandler(client))
 	}
 
 	// Tool: delete_file
@@ -448,6 +397,64 @@ func makeListDocumentsHandler(client GeminiClient) func(ctx context.Context, req
 		res, err := mcp.NewToolResultJSON(map[string]interface{}{
 			"documents": docs,
 		})
+		if err != nil {
+			return mcp.NewToolResultError(err.Error()), nil
+		}
+		return res, nil
+	}
+}
+
+func makeUploadFileHandler(client GeminiClient) func(ctx context.Context, request mcp.CallToolRequest) (*mcp.CallToolResult, error) {
+	return func(ctx context.Context, request mcp.CallToolRequest) (*mcp.CallToolResult, error) {
+		args, ok := request.Params.Arguments.(map[string]interface{})
+		if !ok {
+			return mcp.NewToolResultError("arguments must be a map"), nil
+		}
+		path, ok := getStringArg(args, "path")
+		if !ok {
+			return mcp.NewToolResultError("path must be a string"), nil
+		}
+		storeName, _ := getStringArg(args, "store_name")
+		displayName, _ := getStringArg(args, "name")
+		mimeType, _ := getStringArg(args, "mime_type")
+		metadataJSON, _ := getStringArg(args, "metadata")
+
+		var metadata map[string]string
+		if metadataJSON != "" {
+			// Try to parse as JSON map[string]string
+			if err := json.Unmarshal([]byte(metadataJSON), &metadata); err != nil {
+				return mcp.NewToolResultError(fmt.Sprintf("Failed to parse metadata JSON: %v", err)), nil
+			}
+		}
+
+		var storeID string
+		var err error
+		if storeName != "" {
+			storeID, err = client.ResolveStoreName(ctx, storeName)
+			if err != nil {
+				return mcp.NewToolResultError(fmt.Sprintf("Failed to resolve store name: %v", err)), nil
+			}
+		}
+
+		opts := &gemini.UploadFileOptions{
+			StoreName:   storeID,
+			DisplayName: displayName,
+			MIMEType:    mimeType,
+			Metadata:    metadata,
+			Quiet:       true, // Suppress stdout progress
+		}
+
+		file, err := client.UploadFile(ctx, path, opts)
+		if err != nil {
+			return mcp.NewToolResultError(err.Error()), nil
+		}
+
+		// If file is nil, it means it was uploaded to a store (UploadFile returns nil for store uploads as it handles the operation)
+		if file == nil {
+			return mcp.NewToolResultText(fmt.Sprintf("Uploaded %s to store %s", path, storeName)), nil
+		}
+
+		res, err := mcp.NewToolResultJSON(file)
 		if err != nil {
 			return mcp.NewToolResultError(err.Error()), nil
 		}
