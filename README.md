@@ -4,11 +4,50 @@ A CLI tool and Model Context Protocol (MCP) server for the Google Gemini File Se
 
 ## Installation
 
-### Primary: Releases
+### Releases (Recommended)
 Download the latest release for your platform from the [Releases page](https://github.com/mikesmitty/file-search/releases).
 
 ### Verification
-All release artifacts are signed using [Cosign](https://github.com/sigstore/cosign) (keyless). You can verify the integrity of the downloaded artifacts using the following command:
+All release artifacts are signed using [Cosign](https://github.com/sigstore/cosign) (keyless) and include build provenance attestations.
+You can verify the integrity of the downloaded artifacts using the following commands:
+
+First, verify your downloaded archive matches the checksum:
+
+```bash
+sha256sum -c checksums.txt --ignore-missing
+```
+
+Then verify that the checksums file itself is authentic using [GitHub CLI](https://cli.github.com/):
+
+```bash
+gh attestation verify checksums.txt -R mikesmitty/file-search
+```
+<!-- x-release-please-start-version -->
+```bash
+$ gh attestation verify checksums.txt -R mikesmitty/file-search
+Loaded digest sha256:f45aa9456b79bfeb56dc82ee85dd0730669a5716f8930250485c57a25d271000 for file://checksums.txt
+Loaded 1 attestation from GitHub API
+
+The following policy criteria will be enforced:
+- Predicate type must match:................ https://slsa.dev/provenance/v1
+- Source Repository Owner URI must match:... https://github.com/mikesmitty
+- Source Repository URI must match:......... https://github.com/mikesmitty/file-search
+- Subject Alternative Name must match regex: (?i)^https://github.com/mikesmitty/file-search/
+- OIDC Issuer must match:................... https://token.actions.githubusercontent.com
+
+✓ Verification succeeded!
+
+The following 1 attestation matched the policy criteria
+
+- Attestation #1
+  - Build repo:..... mikesmitty/file-search
+  - Build workflow:. .github/workflows/goreleaser.yml@refs/tags/v0.5.1
+  - Signer repo:.... mikesmitty/file-search
+  - Signer workflow: .github/workflows/goreleaser.yml@refs/tags/v0.5.1
+```
+<!-- x-release-please-end -->
+
+Alternatively, you can verify using Cosign:
 
 <!-- x-release-please-start-version -->
 ```bash
@@ -19,13 +58,8 @@ cosign verify-blob \
   checksums.txt
 ```
 <!-- x-release-please-end -->
-After verifying the checksum file itself, you can verify your downloaded archive matches the checksum:
 
-```bash
-sha256sum -c checksums.txt --ignore-missing
-```
-
-### Fallback: Go Install
+### Go Install (Alternative)
 If you have Go installed, you can install the tool directly:
 
 ```bash
