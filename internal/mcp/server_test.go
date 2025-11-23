@@ -2,9 +2,11 @@ package mcp
 
 import (
 	"context"
+	"encoding/json"
 	"reflect"
 	"testing"
 
+	"github.com/mark3labs/mcp-go/mcp"
 	"github.com/mikesmitty/file-search/internal/gemini"
 	"google.golang.org/genai"
 )
@@ -183,4 +185,140 @@ func TestNewServer_SelectiveToolRegistration(t *testing.T) {
 // For now, I will add a test that ensures the MockClient satisfies the interface.
 func TestMockClientSatisfiesInterface(t *testing.T) {
 	var _ GeminiClient = &MockGeminiClient{}
+}
+
+func TestListStoresHandler_OutputFormat(t *testing.T) {
+	// Mock client that returns a list of stores
+	mockClient := &MockGeminiClient{
+		ListStoresFunc: func(ctx context.Context) ([]*genai.FileSearchStore, error) {
+			return []*genai.FileSearchStore{
+				{Name: "stores/123", DisplayName: "Test Store"},
+			}, nil
+		},
+	}
+
+	// Create the handler using the factory
+	handler := makeListStoresHandler(mockClient)
+
+	// Call the handler
+	req := mcp.CallToolRequest{
+		Params: mcp.CallToolParams{
+			Name:      "list_stores",
+			Arguments: map[string]interface{}{},
+		},
+	}
+
+	result, err := handler(context.Background(), req)
+	if err != nil {
+		t.Fatalf("Handler returned error: %v", err)
+	}
+
+	// Check that result content is NOT an error
+	if result.IsError {
+		t.Fatalf("Handler returned tool error")
+	}
+
+	if len(result.Content) == 0 {
+		t.Fatalf("Handler returned no content")
+	}
+
+	// Get the first content item (TextContent)
+	textContent, ok := result.Content[0].(mcp.TextContent)
+	if !ok {
+		t.Fatalf("Expected TextContent, got %T", result.Content[0])
+	}
+
+	// Parse JSON content
+	var output map[string]interface{}
+	if err := json.Unmarshal([]byte(textContent.Text), &output); err != nil {
+		t.Fatalf("Failed to parse JSON output: %v", err)
+	}
+
+	// Check if it has "stores" key (Object) vs being a list (Array)
+	if _, ok := output["stores"]; !ok {
+		t.Errorf("Expected output to contain 'stores' key, got: %s", textContent.Text)
+	}
+}
+
+func TestListFilesHandler_OutputFormat(t *testing.T) {
+	// Mock client that returns a list of files
+	mockClient := &MockGeminiClient{
+		ListFilesFunc: func(ctx context.Context) ([]*genai.File, error) {
+			return []*genai.File{
+				{Name: "files/123", DisplayName: "Test File"},
+			}, nil
+		},
+	}
+
+	handler := makeListFilesHandler(mockClient)
+
+	req := mcp.CallToolRequest{
+		Params: mcp.CallToolParams{
+			Name:      "list_files",
+			Arguments: map[string]interface{}{},
+		},
+	}
+
+	result, err := handler(context.Background(), req)
+	if err != nil {
+		t.Fatalf("Handler returned error: %v", err)
+	}
+
+	textContent, ok := result.Content[0].(mcp.TextContent)
+	if !ok {
+		t.Fatalf("Expected TextContent")
+	}
+
+	var output map[string]interface{}
+	if err := json.Unmarshal([]byte(textContent.Text), &output); err != nil {
+		t.Fatalf("Failed to parse JSON output: %v", err)
+	}
+
+	if _, ok := output["files"]; !ok {
+		t.Errorf("Expected output to contain 'files' key, got: %s", textContent.Text)
+	}
+}
+
+func TestListDocumentsHandler_OutputFormat(t *testing.T) {
+	// Mock client
+	mockClient := &MockGeminiClient{
+		ResolveStoreNameFunc: func(ctx context.Context, nameOrID string) (string, error) {
+			return "stores/resolved-id", nil
+		},
+		ListDocumentsFunc: func(ctx context.Context, storeID string) ([]*genai.Document, error) {
+			return []*genai.Document{
+				{Name: "corpora/123/documents/456", DisplayName: "Test Doc"},
+			}, nil
+		},
+	}
+
+	handler := makeListDocumentsHandler(mockClient)
+
+	req := mcp.CallToolRequest{
+		Params: mcp.CallToolParams{
+			Name: "list_documents",
+			Arguments: map[string]interface{}{
+				"store_name": "test-store",
+			},
+		},
+	}
+
+	result, err := handler(context.Background(), req)
+	if err != nil {
+		t.Fatalf("Handler returned error: %v", err)
+	}
+
+	textContent, ok := result.Content[0].(mcp.TextContent)
+	if !ok {
+		t.Fatalf("Expected TextContent")
+	}
+
+	var output map[string]interface{}
+	if err := json.Unmarshal([]byte(textContent.Text), &output); err != nil {
+		t.Fatalf("Failed to parse JSON output: %v", err)
+	}
+
+	if _, ok := output["documents"]; !ok {
+		t.Errorf("Expected output to contain 'documents' key, got: %s", textContent.Text)
+	}
 }

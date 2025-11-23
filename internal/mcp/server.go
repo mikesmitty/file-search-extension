@@ -57,34 +57,14 @@ func NewServer(client GeminiClient, enabledTools []string) *server.MCPServer {
 	if isToolEnabled("list_stores") || isToolEnabled("all") {
 		s.AddTool(mcp.NewTool("list_stores",
 			mcp.WithDescription("List all File Search Stores. Returns a JSON array of store objects containing name, displayName, and other metadata."),
-		), func(ctx context.Context, request mcp.CallToolRequest) (*mcp.CallToolResult, error) {
-			stores, err := client.ListStores(ctx)
-			if err != nil {
-				return mcp.NewToolResultError(err.Error()), nil
-			}
-			res, err := mcp.NewToolResultJSON(stores)
-			if err != nil {
-				return mcp.NewToolResultError(err.Error()), nil
-			}
-			return res, nil
-		})
+		), makeListStoresHandler(client))
 	}
 
 	// Tool: list_files
 	if isToolEnabled("list_files") || isToolEnabled("all") {
 		s.AddTool(mcp.NewTool("list_files",
 			mcp.WithDescription("List all files in the Gemini Files API. Returns a JSON array of file objects."),
-		), func(ctx context.Context, request mcp.CallToolRequest) (*mcp.CallToolResult, error) {
-			files, err := client.ListFiles(ctx)
-			if err != nil {
-				return mcp.NewToolResultError(err.Error()), nil
-			}
-			res, err := mcp.NewToolResultJSON(files)
-			if err != nil {
-				return mcp.NewToolResultError(err.Error()), nil
-			}
-			return res, nil
-		})
+		), makeListFilesHandler(client))
 	}
 
 	// Tool: list_documents
@@ -92,32 +72,7 @@ func NewServer(client GeminiClient, enabledTools []string) *server.MCPServer {
 		s.AddTool(mcp.NewTool("list_documents",
 			mcp.WithDescription("List all documents within a specified File Search Store. Returns a JSON array of document objects."),
 			mcp.WithString("store_name", mcp.Required(), mcp.Description("The resource name or display name of the store to list documents from.")),
-		), func(ctx context.Context, request mcp.CallToolRequest) (*mcp.CallToolResult, error) {
-			args, ok := request.Params.Arguments.(map[string]interface{})
-			if !ok {
-				return mcp.NewToolResultError("arguments must be a map"), nil
-			}
-			storeName, ok := getStringArg(args, "store_name")
-			if !ok {
-				return mcp.NewToolResultError("store_name must be a string"), nil
-			}
-
-			// Resolve store name
-			storeID, err := client.ResolveStoreName(ctx, storeName)
-			if err != nil {
-				return mcp.NewToolResultError(fmt.Sprintf("Failed to resolve store name: %v", err)), nil
-			}
-
-			docs, err := client.ListDocuments(ctx, storeID)
-			if err != nil {
-				return mcp.NewToolResultError(err.Error()), nil
-			}
-			res, err := mcp.NewToolResultJSON(docs)
-			if err != nil {
-				return mcp.NewToolResultError(err.Error()), nil
-			}
-			return res, nil
-		})
+		), makeListDocumentsHandler(client))
 	}
 
 	// Tool: create_store
@@ -421,6 +376,78 @@ func makeQueryKnowledgeBaseHandler(client GeminiClient) func(ctx context.Context
 			return mcp.NewToolResultError(err.Error()), nil
 		}
 		res, err := mcp.NewToolResultJSON(resp)
+		if err != nil {
+			return mcp.NewToolResultError(err.Error()), nil
+		}
+		return res, nil
+	}
+}
+
+func makeListStoresHandler(client GeminiClient) func(ctx context.Context, request mcp.CallToolRequest) (*mcp.CallToolResult, error) {
+	return func(ctx context.Context, request mcp.CallToolRequest) (*mcp.CallToolResult, error) {
+		if client == nil {
+			return mcp.NewToolResultError("Gemini API key not configured. Please set GEMINI_API_KEY environment variable."), nil
+		}
+		stores, err := client.ListStores(ctx)
+		if err != nil {
+			return mcp.NewToolResultError(err.Error()), nil
+		}
+		res, err := mcp.NewToolResultJSON(map[string]interface{}{
+			"stores": stores,
+		})
+		if err != nil {
+			return mcp.NewToolResultError(err.Error()), nil
+		}
+		return res, nil
+	}
+}
+
+func makeListFilesHandler(client GeminiClient) func(ctx context.Context, request mcp.CallToolRequest) (*mcp.CallToolResult, error) {
+	return func(ctx context.Context, request mcp.CallToolRequest) (*mcp.CallToolResult, error) {
+		if client == nil {
+			return mcp.NewToolResultError("Gemini API key not configured. Please set GEMINI_API_KEY environment variable."), nil
+		}
+		files, err := client.ListFiles(ctx)
+		if err != nil {
+			return mcp.NewToolResultError(err.Error()), nil
+		}
+		res, err := mcp.NewToolResultJSON(map[string]interface{}{
+			"files": files,
+		})
+		if err != nil {
+			return mcp.NewToolResultError(err.Error()), nil
+		}
+		return res, nil
+	}
+}
+
+func makeListDocumentsHandler(client GeminiClient) func(ctx context.Context, request mcp.CallToolRequest) (*mcp.CallToolResult, error) {
+	return func(ctx context.Context, request mcp.CallToolRequest) (*mcp.CallToolResult, error) {
+		if client == nil {
+			return mcp.NewToolResultError("Gemini API key not configured. Please set GEMINI_API_KEY environment variable."), nil
+		}
+		args, ok := request.Params.Arguments.(map[string]interface{})
+		if !ok {
+			return mcp.NewToolResultError("arguments must be a map"), nil
+		}
+		storeName, ok := getStringArg(args, "store_name")
+		if !ok {
+			return mcp.NewToolResultError("store_name must be a string"), nil
+		}
+
+		// Resolve store name
+		storeID, err := client.ResolveStoreName(ctx, storeName)
+		if err != nil {
+			return mcp.NewToolResultError(fmt.Sprintf("Failed to resolve store name: %v", err)), nil
+		}
+
+		docs, err := client.ListDocuments(ctx, storeID)
+		if err != nil {
+			return mcp.NewToolResultError(err.Error()), nil
+		}
+		res, err := mcp.NewToolResultJSON(map[string]interface{}{
+			"documents": docs,
+		})
 		if err != nil {
 			return mcp.NewToolResultError(err.Error()), nil
 		}
