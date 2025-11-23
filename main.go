@@ -353,7 +353,7 @@ func main() {
 
 	storeCmd.AddCommand(&cobra.Command{
 		Use:     "create [display_name]",
-		Aliases: []string{"new"},
+		Aliases: []string{"new", "add"},
 		Short:   "Create a new File Search Store",
 		Args:    cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -602,7 +602,7 @@ func main() {
 	// Document Commands
 	var documentCmd = &cobra.Command{
 		Use:     "document",
-		Aliases: []string{"doc"},
+		Aliases: []string{"doc", "docs"},
 		Short:   "Manage Documents in Stores",
 	}
 
@@ -840,7 +840,7 @@ func main() {
 	// Operation Commands
 	var operationCmd = &cobra.Command{
 		Use:     "operation",
-		Aliases: []string{"op", "operations"},
+		Aliases: []string{"op", "ops", "operations"},
 		Short:   "Manage long-running operations",
 	}
 
