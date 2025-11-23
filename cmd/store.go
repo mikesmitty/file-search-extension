@@ -133,10 +133,11 @@ func init() {
 	// Store import-file
 	var importFileStore string
 	var importFileStoreID string
+	var importConcurrency int
 	importFileCmd := &cobra.Command{
-		Use:   "import-file [file-name-or-id]",
-		Short: "Import a file from Files API into a Store",
-		Args:  cobra.ExactArgs(1),
+		Use:   "import-file [file-name-or-id]...",
+		Short: "Import files from Files API into a Store",
+		Args:  cobra.MinimumNArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if importFileStore == "" && importFileStoreID == "" {
 				return fmt.Errorf("either --store or --store-id is required")
@@ -148,12 +149,6 @@ func init() {
 			}
 			defer client.Close()
 
-			// Resolve file name to ID
-			fileID, err := client.ResolveFileName(ctx, args[0])
-			if err != nil {
-				return err
-			}
-
 			// Resolve store name to ID if --store was used
 			storeID := importFileStoreID
 			if importFileStore != "" {
@@ -163,22 +158,87 @@ func init() {
 				}
 			}
 
-			err = client.ImportFile(ctx, fileID, storeID, &gemini.ImportFileOptions{
-				Quiet: quiet,
-			})
-			if err != nil {
+			// Define the processor function for a single file ID/name
+			processor := func(ctx context.Context, fileIDOrName string) error {
+				// Resolve file name to ID
+				fileID, err := client.ResolveFileName(ctx, fileIDOrName)
+				if err != nil {
+					return err
+				}
+				
+				if !quiet {
+					fmt.Printf("[+] Starting import: %s\n", fileIDOrName)
+				}
+
+				err = client.ImportFile(ctx, fileID, storeID, &gemini.ImportFileOptions{
+					Quiet: true, // Force quiet for inner operation
+				})
 				return err
 			}
-			if outputFormat == "json" {
-				return printOutput(map[string]string{"status": "imported", "file": fileID, "store": storeID}, "json")
+
+			// Define the progress callback
+			onProgress := func(current, total int, file string, err error) {
+				if err != nil {
+					fmt.Printf("[%d/%d] ✗ Failed: %s (%v)\n", current, total, file, err)
+				} else {
+					fmt.Printf("[%d/%d] ✓ Finished: %s\n", current, total, file)
+				}
 			}
-			// ImportFile already prints progress if not quiet, but we can add a final success message if needed
-			// The client.ImportFile method prints "Import complete" so we are good.
+
+			// Process files using the batch processor
+			batchResult := processBatch(ctx, args, processor, &BatchOptions{
+				Concurrency: importConcurrency,
+				Quiet:       quiet,
+				OnProgress:  onProgress,
+			})
+
+			// Print summary
+			if !quiet {
+				if len(args) > 1 { // Only print summary if multiple files were processed
+					fmt.Printf("\n\nSummary:\n")
+					fmt.Printf("  ✓ Succeeded: %d\n", len(batchResult.Succeeded))
+					fmt.Printf("  ✗ Failed: %d\n", len(batchResult.Failed))
+				}
+			}
+
+			if outputFormat == "json" {
+				// For JSON, aggregate results
+				jsonResult := make(map[string]interface{})
+				jsonResult["total"] = batchResult.Total
+				jsonResult["succeeded"] = len(batchResult.Succeeded)
+				jsonResult["failed"] = len(batchResult.Failed)
+
+				filesSummary := make([]map[string]interface{}, 0, batchResult.Total)
+				for _, f := range batchResult.Succeeded {
+					filesSummary = append(filesSummary, map[string]interface{}{"file": f, "status": "success", "store": storeID})
+				}
+				for f, err := range batchResult.Failed {
+					filesSummary = append(filesSummary, map[string]interface{}{"file": f, "status": "failed", "error": err.Error(), "store": storeID})
+				}
+				jsonResult["files"] = filesSummary
+				return printOutput(jsonResult, "json")
+
+			} else { // Text output
+				if len(batchResult.Failed) > 0 {
+					if !quiet {
+						fmt.Printf("\nFailed files:\n")
+						for f, err := range batchResult.Failed {
+							fmt.Printf("  - %s: %v\n", f, err)
+						}
+					}
+					return fmt.Errorf("some files failed to import")
+				}
+				if !quiet && len(args) == 1 && len(batchResult.Succeeded) == 1 {
+					// If single file and succeeded, print success message
+					fmt.Printf("Imported file: %s to store: %s\n", batchResult.Succeeded[0], storeID)
+				}
+			}
 			return nil
 		},
 	}
 	importFileCmd.Flags().StringVar(&importFileStore, "store", "", "Store display name")
 	importFileCmd.Flags().StringVar(&importFileStoreID, "store-id", "", "Store resource ID ("+constants.StoreResourcePrefix+"xxx)")
+	importFileCmd.Flags().IntVar(&importConcurrency, "concurrency", 5, "Number of parallel imports")
 	importFileCmd.RegisterFlagCompletionFunc("store", func(cmd *cobra.Command, args []string, toComplete string) ([]string, cobra.ShellCompDirective) {
 		return getCompleter().GetStoreNames(), cobra.ShellCompDirectiveNoFileComp
 	})
