@@ -13,13 +13,17 @@ All release artifacts are signed using [Cosign](https://github.com/sigstore/cosi
 <!-- x-release-please-start-version -->
 ```bash
 cosign verify-blob \
-  --certificate-identity "https://github.com/mikesmitty/file-search/.github/workflows/release.yml@refs/tags/v0.2.0" \
+  --certificate-identity "https://github.com/mikesmitty/file-search/.github/workflows/release.yml@refs/tags/v0.5.0" \
   --certificate-oidc-issuer "https://token.actions.githubusercontent.com" \
-  --bundle <ARTIFACT>.sigstore.json \
-  <ARTIFACT>
+  --bundle checksums.txt.sigstore.json \
+  checksums.txt
 ```
 <!-- x-release-please-end -->
-Replacing `<ARTIFACT>` with the filename (e.g., `darwin.arm64.file-search.tar.gz`).
+After verifying the checksum file itself, you can verify your downloaded archive matches the checksum:
+
+```bash
+sha256sum -c checksums.txt --ignore-missing
+```
 
 ### Fallback: Go Install
 If you have Go installed, you can install the tool directly:
