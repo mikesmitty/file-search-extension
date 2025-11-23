@@ -184,15 +184,15 @@ Show upload/indexing progress during long-running operations.
 - [ ] Set up Homebrew tap for `brew install file-search` (see goreleaser brew config).
 - [ ] Update documentation to include this alternative installation method if viable.
 
-### 18. Display Grounding Details
+### 18. Display Grounding Details ✓
 **Priority**: Medium
-**Status**: Not Started
+**Status**: Completed
 **Goal**: Show detailed grounding attribution in query results.
 
-- [ ] Display grounding metadata details in text output format (currently only shows `[Grounding Metadata Found]`).
-- [ ] Show grounding chunks with source documents, snippets, and relevance scores.
-- [ ] Format grounding attribution in a user-friendly way (e.g., "From: documentName.pdf, Page X").
-- [ ] Ensure JSON output already includes full grounding details (verify current implementation).
+- [x] Display grounding metadata details in text output format (currently only shows `[Grounding Metadata Found]`).
+- [x] Show grounding chunks with source documents, snippets, and relevance scores.
+- [x] Format grounding attribution in a user-friendly way (e.g., "From: documentName.pdf, Page X").
+- [x] Ensure JSON output already includes full grounding details (verify current implementation).
 
 ---
 
