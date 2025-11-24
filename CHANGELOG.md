@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.6.1](https://github.com/mikesmitty/file-search/compare/v0.6.0...v0.6.1) (2025-11-24)
+
+
+### Bug Fixes
+
+* Update module github.com/mark3labs/mcp-go to v0.43.1 ([59beac2](https://github.com/mikesmitty/file-search/commit/59beac2d0636fc2217ca2a18251dc4efcc301caf))
+
 ## [0.6.0](https://github.com/mikesmitty/file-search/compare/v0.5.1...v0.6.0) (2025-11-23)
 
 

@@ -41,9 +41,9 @@ The following 1 attestation matched the policy criteria
 
 - Attestation #1
   - Build repo:..... mikesmitty/file-search
-  - Build workflow:. .github/workflows/goreleaser.yml@refs/tags/v0.6.0
+  - Build workflow:. .github/workflows/goreleaser.yml@refs/tags/v0.6.1
   - Signer repo:.... mikesmitty/file-search
-  - Signer workflow: .github/workflows/goreleaser.yml@refs/tags/v0.6.0
+  - Signer workflow: .github/workflows/goreleaser.yml@refs/tags/v0.6.1
 ```
 <!-- x-release-please-end -->
 
@@ -52,7 +52,7 @@ Alternatively, you can verify using Cosign:
 <!-- x-release-please-start-version -->
 ```bash
 cosign verify-blob \
-  --certificate-identity "https://github.com/mikesmitty/file-search/.github/workflows/release.yml@refs/tags/v0.6.0" \
+  --certificate-identity "https://github.com/mikesmitty/file-search/.github/workflows/release.yml@refs/tags/v0.6.1" \
   --certificate-oidc-issuer "https://token.actions.githubusercontent.com" \
   --bundle checksums.txt.sigstore.json \
   checksums.txt
