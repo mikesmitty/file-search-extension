@@ -7,8 +7,8 @@ import (
 	"path/filepath"
 	"testing"
 
-	"gopkg.in/dnaeon/go-vcr.v3/cassette"
-	"gopkg.in/dnaeon/go-vcr.v3/recorder"
+	"gopkg.in/dnaeon/go-vcr.v4/pkg/cassette"
+	"gopkg.in/dnaeon/go-vcr.v4/pkg/recorder"
 )
 
 // newVCRClient creates a client that records/replays interactions using go-vcr.
@@ -23,16 +23,10 @@ func newVCRClient(t *testing.T, cassetteName string) (*Client, func()) {
 	}
 
 	cassettePath := filepath.Join(fixtureDir, cassetteName)
-	
-	// Configure recorder
-	r, err := recorder.New(cassettePath)
-	if err != nil {
-		t.Fatalf("Failed to create recorder: %v", err)
-	}
 
 	// Add a hook to remove the API key from recorded interactions
 	// The Gemini API uses "x-goog-api-key" header or "key" query param
-	r.AddHook(func(i *cassette.Interaction) error {
+	hook := func(i *cassette.Interaction) error {
 		// Scrub header
 		// go-vcr v3 stores headers as map[string][]string
 		// We need to remove the key regardless of casing
@@ -41,7 +35,7 @@ func newVCRClient(t *testing.T, cassetteName string) (*Client, func()) {
 				delete(i.Request.Headers, k)
 			}
 		}
-		
+
 		// Scrub query param (if present)
 		u, err := url.Parse(i.Request.URL)
 		if err == nil {
@@ -52,9 +46,15 @@ func newVCRClient(t *testing.T, cassetteName string) (*Client, func()) {
 				i.Request.URL = u.String()
 			}
 		}
-		
+
 		return nil
-	}, recorder.BeforeSaveHook)
+	}
+
+	// Configure recorder
+	r, err := recorder.New(cassettePath, recorder.WithHook(hook, recorder.BeforeSaveHook))
+	if err != nil {
+		t.Fatalf("Failed to create recorder: %v", err)
+	}
 
 	// Use real API key if recording, dummy if replaying
 	apiKey := os.Getenv("GEMINI_API_KEY")
