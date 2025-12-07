@@ -4,7 +4,7 @@ go 1.24.0
 
 require (
 	github.com/mark3labs/mcp-go v0.43.2
-	github.com/spf13/cobra v1.10.1
+	github.com/spf13/cobra v1.10.2
 	github.com/spf13/viper v1.21.0
 	google.golang.org/genai v1.37.0
 	gopkg.in/dnaeon/go-vcr.v4 v4.0.6
