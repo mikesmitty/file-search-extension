@@ -28,7 +28,7 @@ jobs:
         uses: sigstore/cosign-installer@v4.0.0
 
       - name: Install Syft
-        uses: anchore/sbom-action/download-syft@v0.20.10
+        uses: anchore/sbom-action/download-syft@v0.20.11
 
       - name: Run GoReleaser
         uses: goreleaser/goreleaser-action@v6
