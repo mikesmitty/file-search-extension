@@ -1,5 +1,24 @@
 # Changelog
 
+## [0.7.0](https://github.com/mikesmitty/file-search/compare/v0.6.2...v0.7.0) (2025-12-12)
+
+
+### ⚠ BREAKING CHANGES
+
+* Update module github.com/mark3labs/mcp-go to v0.43.2 ([#70](https://github.com/mikesmitty/file-search/issues/70))
+
+### Features
+
+* Update module github.com/mark3labs/mcp-go to v0.43.2 ([#70](https://github.com/mikesmitty/file-search/issues/70)) ([860b8b2](https://github.com/mikesmitty/file-search/commit/860b8b2104eb2d56cfea4f0325fbf29e0e34cd11))
+* Update module google.golang.org/genai to v1.37.0 ([#72](https://github.com/mikesmitty/file-search/issues/72)) ([830ab38](https://github.com/mikesmitty/file-search/commit/830ab3884428b2bd356764c39bed97dea029f076))
+* Update module google.golang.org/genai to v1.38.0 ([#74](https://github.com/mikesmitty/file-search/issues/74)) ([41b0675](https://github.com/mikesmitty/file-search/commit/41b0675e49bc4881ed3a3bcdfdc8bcc7d8dfbb17))
+* Update module google.golang.org/genai to v1.39.0 ([#76](https://github.com/mikesmitty/file-search/issues/76)) ([d23ec18](https://github.com/mikesmitty/file-search/commit/d23ec187965cbee0503bfdd1939043a4c06f7e10))
+
+
+### Bug Fixes
+
+* Update module github.com/spf13/cobra to v1.10.2 ([#73](https://github.com/mikesmitty/file-search/issues/73)) ([5c31407](https://github.com/mikesmitty/file-search/commit/5c31407c366c294c56e8bc251e9bf07e047f7d63))
+
 ## [0.6.2](https://github.com/mikesmitty/file-search/compare/v0.6.1...v0.6.2) (2025-11-26)
 
 
