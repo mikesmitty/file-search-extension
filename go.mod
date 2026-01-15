@@ -6,7 +6,7 @@ require (
 	github.com/mark3labs/mcp-go v0.43.2
 	github.com/spf13/cobra v1.10.2
 	github.com/spf13/viper v1.21.0
-	google.golang.org/genai v1.41.0
+	google.golang.org/genai v1.41.1
 	gopkg.in/dnaeon/go-vcr.v4 v4.0.6
 )
 
