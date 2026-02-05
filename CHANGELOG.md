@@ -1,5 +1,31 @@
 # Changelog
 
+## [0.7.0](https://github.com/mikesmitty/file-search/compare/v0.6.2...v0.7.0) (2026-02-05)
+
+
+### ⚠ BREAKING CHANGES
+
+* Update module github.com/mark3labs/mcp-go to v0.43.2 ([#70](https://github.com/mikesmitty/file-search/issues/70))
+
+### Features
+
+* Update module github.com/mark3labs/mcp-go to v0.43.2 ([#70](https://github.com/mikesmitty/file-search/issues/70)) ([860b8b2](https://github.com/mikesmitty/file-search/commit/860b8b2104eb2d56cfea4f0325fbf29e0e34cd11))
+* Update module google.golang.org/genai to v1.37.0 ([#72](https://github.com/mikesmitty/file-search/issues/72)) ([830ab38](https://github.com/mikesmitty/file-search/commit/830ab3884428b2bd356764c39bed97dea029f076))
+* Update module google.golang.org/genai to v1.38.0 ([#74](https://github.com/mikesmitty/file-search/issues/74)) ([41b0675](https://github.com/mikesmitty/file-search/commit/41b0675e49bc4881ed3a3bcdfdc8bcc7d8dfbb17))
+* Update module google.golang.org/genai to v1.39.0 ([#76](https://github.com/mikesmitty/file-search/issues/76)) ([d23ec18](https://github.com/mikesmitty/file-search/commit/d23ec187965cbee0503bfdd1939043a4c06f7e10))
+* Update module google.golang.org/genai to v1.40.0 ([#77](https://github.com/mikesmitty/file-search/issues/77)) ([b451e92](https://github.com/mikesmitty/file-search/commit/b451e92add105b4918dc2f48bdd70bc1b708768e))
+* Update module google.golang.org/genai to v1.41.0 ([#80](https://github.com/mikesmitty/file-search/issues/80)) ([0d960c6](https://github.com/mikesmitty/file-search/commit/0d960c67d505d2139211f0d3a95101b89589004b))
+* Update module google.golang.org/genai to v1.42.0 ([#83](https://github.com/mikesmitty/file-search/issues/83)) ([65d53ba](https://github.com/mikesmitty/file-search/commit/65d53ba822be19e9179d0b1ef57cf63c782ec96b))
+* Update module google.golang.org/genai to v1.43.0 ([#85](https://github.com/mikesmitty/file-search/issues/85)) ([fed067c](https://github.com/mikesmitty/file-search/commit/fed067c8c3669c53226f4a168c3f75635c511e96))
+* Update module google.golang.org/genai to v1.44.0 ([#87](https://github.com/mikesmitty/file-search/issues/87)) ([60e47a3](https://github.com/mikesmitty/file-search/commit/60e47a3d9201f123bb5540502028d1806a501407))
+* Update module google.golang.org/genai to v1.45.0 ([#89](https://github.com/mikesmitty/file-search/issues/89)) ([94a357e](https://github.com/mikesmitty/file-search/commit/94a357e6d12845a084e8c717b518b079cbe63100))
+
+
+### Bug Fixes
+
+* Update module github.com/spf13/cobra to v1.10.2 ([#73](https://github.com/mikesmitty/file-search/issues/73)) ([5c31407](https://github.com/mikesmitty/file-search/commit/5c31407c366c294c56e8bc251e9bf07e047f7d63))
+* Update module google.golang.org/genai to v1.41.1 ([#82](https://github.com/mikesmitty/file-search/issues/82)) ([af3cce2](https://github.com/mikesmitty/file-search/commit/af3cce204f4056dd375b605cccd07d390dd1ede5))
+
 ## [0.6.2](https://github.com/mikesmitty/file-search/compare/v0.6.1...v0.6.2) (2025-11-26)
 
 
